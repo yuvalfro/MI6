@@ -61,8 +61,10 @@ public class Inventory {
 		//TODO: Implement this
 		//------------start edit -------------------
 		for (String curr: gadgets) {	// for each
-			if (curr.equals(gadget))
+			if (curr.equals(gadget)) {
+				gadgets.remove(curr);
 				return true;
+			}
 		}
 		//------------end edit ---------------------
 		return false;
@@ -83,5 +85,6 @@ public class Inventory {
 	public List<String> getGadgets (){
 		return gadgets;
 	}
+
 	//------------end edit ---------------------
 }

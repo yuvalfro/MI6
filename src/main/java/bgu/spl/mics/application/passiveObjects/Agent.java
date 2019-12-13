@@ -7,12 +7,28 @@ package bgu.spl.mics.application.passiveObjects;
  * You may add ONLY private fields and methods to this class.
  */
 public class Agent {
+	//------------start edit -------------------
+	private String SerialNumber;
+	private String Name;
+	private boolean available;
+
+	/** Constructor */
+	// TODO check threads
+	public Agent(String SerialNumber, String Name){
+		this.SerialNumber=SerialNumber;
+		this.Name=Name;
+		this.available=true;
+	}
+	//------------end edit ---------------------
 
 	/**
 	 * Sets the serial number of an agent.
 	 */
 	public void setSerialNumber(String serialNumber) {
-		// TODO Implement this
+		// TODO check threads
+		//------------start edit -------------------
+		this.SerialNumber=SerialNumber;
+		//------------end edit ---------------------
 	}
 
 	/**
@@ -21,15 +37,20 @@ public class Agent {
      * @return The serial number of an agent.
      */
 	public String getSerialNumber() {
-		// TODO Implement this
-		return null;
+		// TODO check threads
+		//------------start edit -------------------
+		return this.SerialNumber;
+		//------------end edit ---------------------
 	}
 
 	/**
 	 * Sets the name of the agent.
 	 */
 	public void setName(String name) {
-		// TODO Implement this
+		// TODO check threads
+		//------------start edit -------------------
+		this.Name=name;
+		//------------end edit ---------------------
 	}
 
 	/**
@@ -38,8 +59,10 @@ public class Agent {
      * @return the name of the agent.
      */
 	public String getName() {
-		// TODO Implement this
-		return null;
+		// TODO check threads
+		//------------start edit -------------------
+		return this.Name;
+		//------------end edit ---------------------
 	}
 
 	/**
@@ -48,21 +71,29 @@ public class Agent {
      * @return if the agent is available.
      */
 	public boolean isAvailable() {
-		// TODO Implement this
-		return false;
+		// TODO check threads
+		//------------start edit -------------------
+		return this.available;
+		//------------end edit ---------------------
 	}
 
 	/**
 	 * Acquires an agent.
 	 */
 	public void acquire(){
-		// TODO Implement this
+		// TODO check threads
+		//------------start edit -------------------
+		this.available = false;
+		//------------end edit ---------------------
 	}
 
 	/**
 	 * Releases an agent.
 	 */
 	public void release(){
-		// TODO Implement this
+		// TODO check threads
+		//------------start edit -------------------
+		this.available = true;
+		//------------end edit ---------------------
 	}
 }
