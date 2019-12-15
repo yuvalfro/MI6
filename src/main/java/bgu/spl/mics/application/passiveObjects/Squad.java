@@ -57,13 +57,11 @@ public class Squad {
 	public void releaseAgents(List<String> serials){
 		// TODO Check Threads
 		//------------start edit -------------------
+				/** OMER edit 13/12 **/
 		for(String SN: serials){
-			try {
-				this.agents.get(SN).release();
-			}catch(Exception e){
-				System.out.println(SN +" serial number doesn't exist.");
-			}
+			this.agents.get(SN).release();
 		}
+				/** OMER end edit 13/12 **/
 		//------------end edit ---------------------
 	}
 

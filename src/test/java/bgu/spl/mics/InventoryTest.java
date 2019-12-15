@@ -24,7 +24,6 @@ public class InventoryTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        inv_tst = null;
     }
 
     @Test

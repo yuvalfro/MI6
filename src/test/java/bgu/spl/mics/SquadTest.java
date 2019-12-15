@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SquadTest {
@@ -58,17 +59,20 @@ public class SquadTest {
         List<String> list=new LinkedList<String>();
         list.add("007");
         list.add("0012");
-        // TODO: how  to run the test?  need to wait for resources...
+        assertTrue(sqd_tst.getAgents(list));
+        list.add("0012313");
+        assertFalse(sqd_tst.getAgents(list));       // not exists
+        list.remove("0012313");
+        assertTrue(sqd_tst.getAgents(list));
     }
 
-
-            /** OMER edit 13/12 **/
     @Test
     public void getAgentsNames(){
         List<String> serials = new LinkedList<>();
         serials.add("007");
         serials.add("0012");
         List<String> names = sqd_tst.getAgentsNames(serials);
+        assertTrue(names.contains("Yuval F"));
+        assertTrue(names.contains("Omer L"));
     }
-            /** OMER end edit 13/12 **/
 }

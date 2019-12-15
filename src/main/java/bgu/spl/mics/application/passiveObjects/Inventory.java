@@ -26,7 +26,7 @@ public class Inventory {
 	 * Retrieves the single instance of this class.
 	 */
 	public static Inventory getInstance() {
-		//TODO: Implement this
+		// TODO Check Threads
 		//------------start edit -------------------
 		if (instance == null)
 			instance = new Inventory();
@@ -43,7 +43,7 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (String[] inventory) {
-		//TODO: Implement this
+		// TODO Check Threads
 		//------------start edit -------------------
 		for(int i=0; i<inventory.length; i++){
 			gadgets.add(inventory[i]);
@@ -58,7 +58,7 @@ public class Inventory {
      * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
      */
 	public boolean getItem(String gadget){
-		//TODO: Implement this
+		// TODO Check Threads
 		//------------start edit -------------------
 		for (String curr: gadgets) {	// for each
 			if (curr.equals(gadget)) {
