@@ -20,7 +20,6 @@ public class Agent {
 		this.available=true;
 	}
 	//------------end edit ---------------------
-
 	/**
 	 * Sets the serial number of an agent.
 	 */

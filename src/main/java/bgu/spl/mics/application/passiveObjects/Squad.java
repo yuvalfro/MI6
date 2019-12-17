@@ -1,6 +1,4 @@
 package bgu.spl.mics.application.passiveObjects;
-import sun.awt.image.ImageWatched;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +22,6 @@ public class Squad {
 		agents =  new HashMap< String,Agent>();
 	}
 	//------------end edit ---------------------
-
 	/**
 	 * Retrieves the single instance of this class.
 	 */
@@ -57,17 +54,17 @@ public class Squad {
 	public void releaseAgents(List<String> serials){
 		// TODO Check Threads
 		//------------start edit -------------------
-				/** OMER edit 13/12 **/
+		/** OMER edit 13/12 **/
 		for(String SN: serials){
 			this.agents.get(SN).release();
 		}
-				/** OMER end edit 13/12 **/
+		/** OMER end edit 13/12 **/
 		//------------end edit ---------------------
 	}
 
 	/**
 	 * simulates executing a mission by calling sleep.
-	 * @param time   milliseconds to sleep
+	 * @param time   time ticks to sleep
 	 */
 	public void sendAgents(List<String> serials, int time){
 		// TODO Implement this
@@ -93,16 +90,15 @@ public class Squad {
     public List<String> getAgentsNames(List<String> serials){
 		// TODO Check Threads
 		//------------start edit -------------------
-				/** OMER edit 13/12 **/
+		/** OMER edit 13/12 **/
 		List<String> names = new LinkedList<>();
 		for (String curr:serials) {
 			names.add(agents.get(curr).getName());
 		}
 		return names;
-				/** OMER end edit 13/12 **/
+		/** OMER end edit 13/12 **/
 		//------------end edit ---------------------
     }
-
 
 	//------------start edit -------------------
 	public Map<String,Agent> getAgentsMap (){

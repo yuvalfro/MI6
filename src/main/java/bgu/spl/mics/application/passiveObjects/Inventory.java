@@ -1,6 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import java.util.*;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,6 +14,7 @@ import java.util.List;
 public class Inventory {
 	private List<String> gadgets;
 	//------------start edit -------------------
+	//TODO fix instance with new singleton TIRGUL 8 - NOT THREAD SAFE
 	private static Inventory instance = null;
 
 	/** Constructor */
@@ -23,8 +24,8 @@ public class Inventory {
 	}
 	//------------end edit ---------------------
 	/**
-	 * Retrieves the single instance of this class.
-	 */
+     * Retrieves the single instance of this class.
+     */
 	public static Inventory getInstance() {
 		// TODO Check Threads
 		//------------start edit -------------------
