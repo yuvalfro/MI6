@@ -1,5 +1,10 @@
 package bgu.spl.mics;
 
+import javafx.util.Pair;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * The Subscriber is an abstract class that any subscriber in the system
  * must extend. The abstract Subscriber class is responsible to get and
@@ -17,6 +22,10 @@ package bgu.spl.mics;
  */
 public abstract class Subscriber extends RunnableSubPub {
     private boolean terminated = false;
+    //------------start edit - 19/12 --------------------**/
+    ConcurrentHashMap < Class<? extends Event>, Callback> event_callback_map;
+    ConcurrentHashMap < Class<? extends Broadcast>, Callback> broadcast_callback_map;
+    //------------end edit - 19/12----------------------**/
 
     /**
      * @param name the Subscriber name (used mainly for debugging purposes -
@@ -49,6 +58,10 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
         //TODO: implement this.
+        //------------start edit - 19/12 --------------------**/
+        event_callback_map.putIfAbsent(type,callback);                  //2. Store the {@code callback} so that when events of type {@code type} are received it will be called.
+        MessageBrokerImpl.getInstance().subscribeEvent(type,this);   //1. Subscribe to events in the singleton MessageBroker using the supplied {@code type}
+        //------------end edit - 19/12----------------------**/
     }
 
     /**
@@ -73,6 +86,10 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
         //TODO: implement this.
+        //------------start edit - 19/12 --------------------**/
+        broadcast_callback_map.putIfAbsent(type,callback);                  //2. Store the {@code callback} so that when broadcast messages of type {@code type} received it will be called.
+        MessageBrokerImpl.getInstance().subscribeBroadcast(type,this);   //1. Subscribe to broadcast messages in the singleton MessageBroker using the supplied {@code type}
+        //------------end edit - 19/12----------------------**/
     }
 
     /**
@@ -87,6 +104,9 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     protected final <T> void complete(Event<T> e, T result) {
         //TODO: implement this.
+        //------------start edit - 19/12 --------------------**/
+        MessageBrokerImpl.getInstance().complete(e,result);
+        //------------end edit - 19/12----------------------**/
     }
 
     /**
@@ -103,10 +123,22 @@ public abstract class Subscriber extends RunnableSubPub {
      */
     @Override
     public final void run() {
-        initialize();
+        //------------start edit - 19/12 --------------------**/
+        MessageBrokerImpl.getInstance().register(this);     // register the subscriber
+        //------------end edit - 19/12----------------------**/
+        initialize();                   // this function is of runnableSubPun, which M Q and more will use
         while (!terminated) {
-            System.out.println("NOT IMPLEMENTED!!!"); //TODO: you should delete this line :)
+            //------------start edit - 19/12 --------------------**/
+            try {
+                Message curr_msg = MessageBrokerImpl.getInstance().awaitMessage(this);      //waiting for msg
+                if( curr_msg.getClass().isInstance(Event.class)){
+                    event_callback_map.get(curr_msg).call(curr_msg);                           // calling callback
+                } //TODO watch for curr_msg sended to callback (mayabe not right)
+                else
+                    broadcast_callback_map.get(curr_msg).call(curr_msg);                       // calling callback
+            } catch (InterruptedException e) {}
         }
+        MessageBrokerImpl.getInstance().unregister(this);   // unregister the subscriber
+            //------------end edit - 19/12----------------------**/
     }
-
 }
