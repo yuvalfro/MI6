@@ -83,9 +83,9 @@ public class Inventory {
 	}
 
 	//------------start edit -------------------
-	public List<String> getGadgets (){
-		return gadgets;
-	}
+	//public List<String> getGadgets (){
+	//	return gadgets;
+	//}
 
 	//------------end edit ---------------------
 }

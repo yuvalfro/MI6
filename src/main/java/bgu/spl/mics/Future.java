@@ -36,17 +36,21 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      * 	       
      */
-	public T get() throws InterruptedException {
+	public T get() {
 		//TODO: implement this.
-		//------------start edit - 17/12----------------------**/
+		//------------start edit - 19/12----------------------**/
 		synchronized (this){
 			if (!isDone)		//changed from while to if
-				this.wait();
+			{
+				try {
+					this.wait();
+				} catch (InterruptedException e) {}
+			}
 			//this.notifyAll();
 			return this.result;
 		}
 		//TODO: add wait until complete
-		//------------end edit - 17/12-----------------------**/
+		//------------end edit - 19/12-----------------------**/
 	}
 	
 	/**

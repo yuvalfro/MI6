@@ -225,6 +225,7 @@ public class MessageBrokerImpl implements MessageBroker {
 						subscriber_msg_type_map.get(sub).getKey().add(e);				// add the message b to sub queue
 						sub.notify();													// awake for the AWAIT MESSAGE
 
+						future_event = new Future <T>();
 						future_event_map.put(e, future_event);							// adding new <event,future> to the map
 					}
 				}
