@@ -1,5 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+
 /**
  * Passive data-object representing a information about an agent in MI6.
  * You must not alter any of the given public methods of this class. 
@@ -20,6 +23,7 @@ public class Agent {
 		this.available=true;
 	}
 	//------------end edit ---------------------
+
 	/**
 	 * Sets the serial number of an agent.
 	 */

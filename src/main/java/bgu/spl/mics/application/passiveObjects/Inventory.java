@@ -13,27 +13,24 @@ import java.util.List;
  */
 public class Inventory {
 	private List<String> gadgets;
-	//------------start edit -------------------
-	//TODO fix instance with new singleton TIRGUL 8 - NOT THREAD SAFE
-	private static Inventory instance = null;
+	//------------start edit - 20/12-------------------
+	/** for signleton - thread safe*/
+	private static class SingletonHolder {
+		private static Inventory inventory_instance = new Inventory();
+	} // get instance like TIRGUL 8
 
 	/** Constructor */
 	private Inventory(){
-		//TODO - maybe edit
 		gadgets = new LinkedList<>();
 	}
-	//------------end edit ---------------------
+	//------------end edit - 20/12---------------------
 	/**
      * Retrieves the single instance of this class.
      */
 	public static Inventory getInstance() {
-		// TODO Check Threads
-		//------------start edit -------------------
-		if (instance == null)
-			instance = new Inventory();
-		return instance;
-		//------------end edit ---------------------
-		//return null;
+		//------------start edit - 20/12-------------------
+		return SingletonHolder.inventory_instance;
+		//------------end edit - 20/12---------------------
 	}
 
 	/**
@@ -45,11 +42,11 @@ public class Inventory {
      */
 	public void load (String[] inventory) {
 		// TODO Check Threads
-		//------------start edit -------------------
+		//------------start edit - 20/12-------------------
 		for(int i=0; i<inventory.length; i++){
 			gadgets.add(inventory[i]);
 		}
-		//------------end edit ---------------------
+		//------------end edit - 20/12---------------------
 	}
 	
 	/**
@@ -59,15 +56,16 @@ public class Inventory {
      * @return 	‘false’ if the gadget is missing, and ‘true’ otherwise
      */
 	public boolean getItem(String gadget){
-		// TODO Check Threads
-		//------------start edit -------------------
-		for (String curr: gadgets) {	// for each
-			if (curr.equals(gadget)) {
-				gadgets.remove(curr);
-				return true;
+		//------------start edit - 20/12 -------------------
+		synchronized (gadgets) {	//locking all the gadgets for safety - may find a gadget and than before i'll take it, it will be deleted
+			for (String curr : gadgets) {    // for each
+				if (curr.equals(gadget)) {
+					gadgets.remove(curr);	//remove this gadget from the gadgets list
+					return true;
+				}
 			}
 		}
-		//------------end edit ---------------------
+		//------------end edit - 20/12 ---------------------
 		return false;
 	}
 

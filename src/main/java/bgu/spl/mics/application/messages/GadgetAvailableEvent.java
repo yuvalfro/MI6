@@ -1,9 +1,11 @@
 package bgu.spl.mics.application.messages;
 
 import bgu.spl.mics.Event;
+import java.util.ArrayList;
 
 //------------start edit - 19/12 --------------------**/
-public class GadgetAvailableEvent implements Event <Boolean>{
+public class GadgetAvailableEvent implements Event <ArrayList<Object>>{
+      //  <Pair< Boolean, Pair<Integer, String>>>
 
     private String gadget;
 

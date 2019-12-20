@@ -2,10 +2,11 @@ package bgu.spl.mics.application.messages;
 
 import bgu.spl.mics.Event;
 import bgu.spl.mics.application.passiveObjects.MissionInfo;
+import java.util.ArrayList;
 import java.util.List;
 
 //------------start edit - 19/12 --------------------**/
-public class SendAgentsEvent implements Event<Boolean> {
+public class SendAgentsEvent implements Event <ArrayList<Object>> {
     private List<String> agentsToSend;
     private int timeForMission;
 

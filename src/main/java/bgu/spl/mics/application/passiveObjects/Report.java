@@ -9,49 +9,72 @@ import java.util.List;
  * You may add ONLY private fields and methods to this class.
  */
 public class Report {
+	//------------start edit - 20/12-------------------
+	private String MissionName;
+	private int M;
+	private int Moneypenny;
+	private List<String> AgentsSerialNumbers;
+	private List<String> AgentsNames;
+	private String GadgetName;
+	private int QTime;
+	private int TimeIssued;
+	private int TimeCreated;
+
+
+	/** Constructor */
+	//------------end edit - 20/12 ---------------------
 	/**
      * Retrieves the mission name.
      */
 	public String getMissionName() {
-		// TODO Implement this
-		return null;
+		//------------start edit - 20/12-------------------
+		return MissionName;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the mission name.
 	 */
 	public void setMissionName(String missionName) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.MissionName = missionName;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Retrieves the M's id.
 	 */
 	public int getM() {
-		// TODO Implement this
-		return 0;
+		//------------start edit - 20/12-------------------
+		return M;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the M's id.
 	 */
 	public void setM(int m) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.M=m;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Retrieves the Moneypenny's id.
 	 */
 	public int getMoneypenny() {
-		// TODO Implement this
-		return 0;
+		//------------start edit - 20/12-------------------
+		return Moneypenny;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the Moneypenny's id.
 	 */
 	public void setMoneypenny(int moneypenny) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.Moneypenny=moneypenny;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
@@ -60,15 +83,18 @@ public class Report {
 	 * @return The serial numbers of the agents.
 	 */
 	public List<String> getAgentsSerialNumbers() {
-		// TODO Implement this
-		return null;
+		//------------start edit - 20/12-------------------
+		return AgentsSerialNumbers;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the serial numbers of the agents.
 	 */
 	public void setAgentsSerialNumbers(List<String> agentsSerialNumbers) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.AgentsSerialNumbers=agentsSerialNumbers;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
@@ -77,15 +103,18 @@ public class Report {
 	 * @return The agents names.
 	 */
 	public List<String> getAgentsNames() {
-		// TODO Implement this
-		return null;
+		//------------start edit - 20/12-------------------
+		return AgentsNames;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the agents names.
 	 */
 	public void setAgentsNames(List<String> agentsNames) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.AgentsNames=agentsNames;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
@@ -94,59 +123,71 @@ public class Report {
 	 * @return the name of the gadget.
 	 */
 	public String getGadgetName() {
-		// TODO Implement this
-		return null;
+		//------------start edit - 20/12-------------------
+		return GadgetName;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the name of the gadget.
 	 */
 	public void setGadgetName(String gadgetName) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.GadgetName=gadgetName;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Retrieves the time-tick in which Q Received the GadgetAvailableEvent for that mission.
 	 */
 	public int getQTime() {
-		// TODO Implement this
-		return 0;
+		//------------start edit - 20/12-------------------
+		return QTime;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the time-tick in which Q Received the GadgetAvailableEvent for that mission.
 	 */
 	public void setQTime(int qTime) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.QTime=qTime;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Retrieves the time when the mission was sent by an Intelligence Publisher.
 	 */
 	public int getTimeIssued() {
-		// TODO Implement this
-		return 0;
+		//------------start edit - 20/12-------------------
+		return TimeIssued;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the time when the mission was sent by an Intelligence Publisher.
 	 */
 	public void setTimeIssued(int timeIssued) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.TimeIssued=timeIssued;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Retrieves the time-tick when the report has been created.
 	 */
 	public int getTimeCreated() {
-		// TODO Implement this
-		return 0;
+		//------------start edit - 20/12-------------------
+		return TimeCreated;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Sets the time-tick when the report has been created.
 	 */
 	public void setTimeCreated(int timeCreated) {
-		// TODO Implement this
+		//------------start edit - 20/12-------------------
+		this.TimeCreated=timeCreated;
+		//------------end edit - 20/12 ---------------------
 	}
 }

@@ -14,6 +14,9 @@ import java.util.concurrent.Semaphore;
  */
 public class MessageBrokerImpl implements MessageBroker {
 	//------------start edit - 17/12 --------------------**/
+
+	//TODO: change pair to ARRAYLIST!#!@#!@#!@#!@#!@#!#!@#!@#!@#!@#
+
 	MessageBrokerImpl mb_instance = null;
 		//private ConcurrentHashMap<Subscriber,Semaphore> subscriber_semaphore_map;
 		//		//each subscriber has its own semaphore. need to catch it to delete for example
@@ -207,7 +210,7 @@ public class MessageBrokerImpl implements MessageBroker {
 			return null;
 		}
 		else {
-			Future<T> future_event = new Future<>();
+			Future<T> future_event;
 			future_event = null;
 			Subscriber sub = events_q_map.get(e.getClass()).getValue().peek();
 			Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>> event_pair = events_q_map.get(e.getClass());

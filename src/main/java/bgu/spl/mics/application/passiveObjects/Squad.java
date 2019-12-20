@@ -1,8 +1,15 @@
 package bgu.spl.mics.application.passiveObjects;
+import bgu.spl.mics.MessageBroker;
+import bgu.spl.mics.MessageBrokerImpl;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Passive data-object representing a information about an agent in MI6.
@@ -13,25 +20,26 @@ import java.util.Map;
 public class Squad {
 
 	private Map<String, Agent> agents;
-	//------------start edit -------------------
-	private static Squad instance = null;
+	//------------start edit -20/12 -------------------
+	private ConcurrentHashMap<String, Semaphore> agents_semaphore_map;
+
+	/** for signleton - thread safe*/
+	private static class SingletonHolder {
+		private static Squad squad_instance = new Squad();
+	} // get instance like TIRGUL 8
 
 	/** Constructor */
 	private Squad(){
-		//TODO - maybe edit
-		agents =  new HashMap< String,Agent>();
 	}
-	//------------end edit ---------------------
+
+	//------------end edit - 20/12 ---------------------
 	/**
 	 * Retrieves the single instance of this class.
 	 */
 	public static Squad getInstance() {
-		//------------start edit -------------------
-		if (instance == null)
-			instance = new Squad();
-		return instance;
-		//------------end edit ---------------------
-		//return null;
+		//------------start edit - 20/12-------------------
+		return SingletonHolder.squad_instance;
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
@@ -41,36 +49,45 @@ public class Squad {
 	 * 						of the squad.
 	 */
 	public void load (Agent[] agents) {
-		//------------start edit -------------------
+		//------------start edit - 20/12-------------------
 		for(int i=0; i<agents.length; i++){
-			this.agents.put(agents[i].getSerialNumber(),agents[i]);
+			this.agents.put(agents[i].getSerialNumber(),agents[i]);		//insert the agents to the map of agents
+			this.agents_semaphore_map.put(agents[i].getSerialNumber() , new Semaphore(1,true));		//creating map of agent's semaphore, to manage fairness in the getAgents method
 		}
-		//------------end edit ---------------------
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * Releases agents.
 	 */
 	public void releaseAgents(List<String> serials){
-		// TODO Check Threads
-		//------------start edit -------------------
-		/** OMER edit 13/12 **/
+		// TODO Check Threads - DONE(?) in M
+		//------------start edit - 20/12 -------------------
 		for(String SN: serials){
-			this.agents.get(SN).release();
+			this.agents.get(SN).release();						//change the value of isAvailable to true
+			this.agents_semaphore_map.get(SN).notifyAll();		// wake up all threads that has been waiting to this agent
 		}
-		/** OMER end edit 13/12 **/
-		//------------end edit ---------------------
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
 	 * simulates executing a mission by calling sleep.
 	 * @param time   time ticks to sleep
 	 */
-	public void sendAgents(List<String> serials, int time){
-		// TODO Implement this
-		//------------start edit - 19/12 -------------------
+	public void sendAgents(List<String> serials, int time) throws InterruptedException {
+		/** ASSUMPTION: will happen only after getAgents will return true*/
+		//------------start edit - 20/12 -------------------
+		for(String curr_serial: serials){				/** SHOULD BE ALREADY FALSE IN THE AGENT FIELD*/
+			agents.get(curr_serial).acquire(); 			//acquired agent from AGENT.JAVA
+		}	// redundant...
 
-		//------------end edit - 19/12 ---------------------
+		//sleep for time* 100 (as said in the forum SendAgents...)
+		sleep(time*100);
+
+		for(String curr_serial: serials){				// SHOULD BE ALREADY FALSE IN THE AGENT FIELD
+			agents.get(curr_serial).release(); 			//released agent from AGENT.JAVA
+		}	//now the agents are again available
+		//------------end edit - 20/12 ---------------------
 	}
 
 	/**
@@ -78,11 +95,28 @@ public class Squad {
 	 * @param serials   the serial numbers of the agents
 	 * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
 	 */
-	public boolean getAgents(List<String> serials){
+	public boolean getAgents(List<String> serials) throws InterruptedException {
 		// TODO MIND of deadlock & deadpool!!  needs to wait until they all available.
-		//------------start edit -------------------
-		return false;
-		//------------end edit ---------------------
+		/** ASSUMPTION: only this function is locked and only it TRUE will cause sendAgentsEvent (and more) from the M class */
+		//------------start edit - 20/12 -------------------
+		for(String curr_serial: serials){	//checks if the agents are in the squad
+			if(!agents.containsKey(curr_serial))
+				return false;
+		}
+		serials.sort(String::compareTo);	//sorting serialNumbers by lexicographic why
+		for(String curr_serial:serials){
+			Agent curr_agent = agents.get(curr_serial);							//get agent
+			Semaphore curr_semaphore = agents_semaphore_map.get(curr_serial);	//get it's semaphore
+
+			curr_semaphore.acquire(); /***/
+			while(!curr_agent.isAvailable()) {		// if not avail, wait.
+				curr_semaphore.wait();					// wait on the current agent
+			}
+			curr_agent.acquire();					//agent is now available = false
+			curr_semaphore.release();	/***/    	//unlocking the semaphore
+		}
+		return true;
+		//------------end edit - 20/12 ---------------------
 	}
 
     /**
@@ -103,9 +137,7 @@ public class Squad {
 		//------------end edit ---------------------
     }
 
-	//------------start edit -------------------
-	public Map<String,Agent> getAgentsMap (){
-		return agents;
-	}
-	//------------end edit ---------------------
+	//------------start edit - 20/12 -------------------
+	//public Map<String,Agent> getAgentsMap (){	return agents;	}
+	//------------end edit - 20/12---------------------
 }
