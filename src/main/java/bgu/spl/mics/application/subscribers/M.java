@@ -9,6 +9,7 @@ import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * M handles ReadyEvent - fills a report and sends agents to mission.
@@ -70,7 +71,8 @@ public class M extends Subscriber {
 				GadgetAvailableEvent new_gadgetAvailEvent = new GadgetAvailableEvent(e.getMissionInfo().getGadget());				//creating event available gadget we want for the mission
 				Future< ArrayList<Object> > future_gadgetAvail = getSimplePublisher().sendEvent(new_gadgetAvailEvent);				//Future object we make for the GadgetAvailEvent
 
-				if ((boolean)future_gadgetAvail.get().get(0)) {	//if gadget is available - we took it and deleted it
+				future_gadgetAvail.get((long)e.getMissionInfo().getDuration(), TimeUnit.MILLISECONDS); 	//it will wait if searching - for most the duration of the mission
+				if (future_gadgetAvail!=null && (boolean)future_gadgetAvail.get().get(0)) {	//if gadget is available - we took it and deleted it
 					/** __if this ^ future is true__ - gadget is available
 					 * __else__: no such gadget, return false.    no otermination proccess because GadgetAvail is fast
 					/** MADE sure that INVENTORY is thread safe for those actions */

@@ -2,9 +2,11 @@ package bgu.spl.mics;
 
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The {@link MessageBrokerImpl class is the implementation of the MessageBroker interface.
@@ -16,7 +18,7 @@ public class MessageBrokerImpl implements MessageBroker {
 
 		//private ConcurrentHashMap<Subscriber,Semaphore> subscriber_semaphore_map;
 		//		//each subscriber has its own semaphore. need to catch it to delete for example
-	private ConcurrentHashMap< Subscriber, Pair<ConcurrentLinkedQueue<Message> , ConcurrentLinkedQueue<Class <? extends Message>>>> subscriber_msg_type_map;
+	private ConcurrentHashMap< Subscriber, ConcurrentLinkedQueue<Message> > subscriber_msg_type_map;
 			//each subscriber will go into map and have it's own Q   &   types of messages to find when delete
 			//  Semaphore is for fairness!!!
 	private ConcurrentHashMap < Class<? extends Event> , Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>>> events_q_map;
@@ -66,7 +68,7 @@ public class MessageBrokerImpl implements MessageBroker {
 				events_q_map.putIfAbsent(type, tmp_pair);		//if this pair already exists - returns the value of the pair,
 				                                                        // else, returns null and creates it
 				events_q_map.get(type).getValue().add(m);				//adds m to the EVENT Q
-				subscriber_msg_type_map.get(m).getValue().add(type);	// added to class database
+				/**CANCELED*/ //subscriber_msg_type_map.get(m).getValue().add(type);	// added to class database
 				                                                        //adding event q the subscriber m
 			}
 		}
@@ -114,7 +116,7 @@ public class MessageBrokerImpl implements MessageBroker {
 				broadcast_q_map.putIfAbsent(type, tmp_pair);			//if this pair already exists - returns the value of the pair,
 																		//else, returns null and creates it
 				broadcast_q_map.get(type).getValue().add(m);			//adds m to the BROADCAST Q
-				subscriber_msg_type_map.get(m).getValue().add(type);    // added to class database
+				/**CANCELED*/ //subscriber_msg_type_map.get(m).getValue().add(type);    // added to class database
 																		//adding event q the subscriber m
 			}
 		}
@@ -168,7 +170,7 @@ public class MessageBrokerImpl implements MessageBroker {
 			for (Subscriber sub: broadcast_pair.getValue()) {
 				synchronized (sub) { 											// synchronized THE OBJECT SUBSCRIBER
 					if (subscriber_msg_type_map.containsKey(sub)) {				//checks if subscriber is in UNREGISTER proccess
-						subscriber_msg_type_map.get(sub).getKey().add(b);		// add the message b to sub queue
+						subscriber_msg_type_map.get(sub).add(b);		// add the message b to sub queue //TODO: changed here .getKey()
 						sub.notify();											// awake for the AWAIT MESSAGE
 					}
 				}
@@ -200,39 +202,71 @@ public class MessageBrokerImpl implements MessageBroker {
 	public <T> Future<T> sendEvent(Event<T> e) {
 		// TODO Auto-generated method stub
 		//------------start edit - 21/12 --------------------**/
-		if( (!events_q_map.containsKey(e.getClass())) || (events_q_map.get(e.getClass()).getValue().peek()==null) ) {	// no such event, or no subscriber's queue
+		if ((!events_q_map.containsKey(e.getClass())) || (events_q_map.get(e.getClass()).getValue().peek() == null)) {    // no such event, or no subscriber's queue
 			return null;
-		}
-		else {
+		} else {
+			Subscriber sub = events_q_map.get(e.getClass()).getValue().peek();
+			Future<T> future_event = new Future<T>();
+			synchronized (sub) {
+				//TODO: watch for unregistering
+				Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>> event_pair = events_q_map.get(e.getClass());
+				try {
+					event_pair.getKey().acquire();
+					Subscriber first = event_pair.getValue().poll();                 //dequeue first subscriber
+					event_pair.getValue().add(first);                                //enqueue first to be the last
+					subscriber_msg_type_map.get(sub).add(e);                         // add the message e to sub queue
+					sub.notifyAll();                                                    // awake for the AWAIT MESSAGE
+					event_pair.getKey().release();
+				} catch (InterruptedException ex) {
+				}
+			}
+			future_event_map.put(e, future_event);                            // adding new <event,future> to the map
+			future_event.get();
+			return future_event;
+		}	
+	}
+
+
+/*
 			Future<T> future_event;
-			future_event = null;
+			future_event = new Future<T>();
 			Subscriber sub = events_q_map.get(e.getClass()).getValue().peek();
 			Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>> event_pair = events_q_map.get(e.getClass());
-			while (sub != null) {
+			if(sub!=null){
 				synchronized (sub) {
 					try {
 						event_pair.getKey().acquire();
+						if ((sub == event_pair.getValue().peek()) & (subscriber_msg_type_map.containsKey(sub))) {
+							Subscriber first = event_pair.getValue().poll();                 //dequeue first subscriber
+							event_pair.getValue().add(first);                                //enqueue first to be the last
+							subscriber_msg_type_map.get(sub).add(e);                		 // add the message e to sub queue
+							sub.notify();                                                    // awake for the AWAIT MESSAGE
+						}
+						event_pair.getKey().release();
+					} catch (InterruptedException ex) {	}
+				}
+				future_event_map.put(e, future_event);                            // adding new <event,future> to the map
+				future_event.get();
+				return future_event;
+
+				/*while(!future_event.isDone()) {
+					try {
+						future_event.get(1, TimeUnit.MILLISECONDS);
 					} catch (InterruptedException ex) {
 					}
-					if ((sub == event_pair.getValue().peek()) & (subscriber_msg_type_map.containsKey(sub))) {
-
-						Subscriber first = event_pair.getValue().poll();				//dequeue first subscriber
-						event_pair.getValue().add(first);								//enqueue first to be the last
-
-						subscriber_msg_type_map.get(sub).getKey().add(e);				// add the message b to sub queue
-						sub.notify();													// awake for the AWAIT MESSAGE
-
-						future_event = new Future <T>();
-						future_event_map.put(e, future_event);							// adding new <event,future> to the map
-					}
 				}
-				if (future_event != null)
+				return future_event;
+			}
+			return null;
+		} */
+
+	/**CANCLED*/ /*			if (future_event != null)
 					return future_event;
 				else
 					sub = events_q_map.get(e.getClass()).getValue().peek();
-			}
-			return null;
-		}
+			}*/
+
+
 		/*
 			Pair <Semaphore,ConcurrentLinkedQueue<Subscriber>> event_pair = events_q_map.get(e.getClass());
 				// event pair - its a semaphore and queue of subs
@@ -295,14 +329,14 @@ public class MessageBrokerImpl implements MessageBroker {
 		}
 		*/
 		//------------end edit - 21/12----------------------**/
-	}
+
 
 	@Override
 	public void register(Subscriber m) {
 		// TODO Auto-generated method stub
 		//------------start edit - 19/12 --------------------**/
 		synchronized (m){						// each registration will lock the subscriber in case of unregistering
-			subscriber_msg_type_map.put(m, new Pair (new ConcurrentLinkedQueue<>(), new ConcurrentLinkedQueue<>()));	// creating new subscriber
+			subscriber_msg_type_map.put(m, new ConcurrentLinkedQueue<>());	// creating new subscriber
 		}
 		//------------end edit - 19/12----------------------**/
 	}
@@ -312,16 +346,24 @@ public class MessageBrokerImpl implements MessageBroker {
 		// TODO Auto-generated method stub
 		//------------start edit - 19/12 --------------------**/
 		synchronized (m){
+			subscriber_msg_type_map.remove(m);
+			for(Map.Entry< Class<? extends Event> , Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>>> entry_event : events_q_map.entrySet()) 	//running on the Pairs <Semaphore, Q>
+				entry_event.getValue().getValue().remove(m);			//removing subscriber m from X_event q
+			for(Map.Entry< Class<? extends Broadcast> , Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>>> entry_broadcast : broadcast_q_map.entrySet()) 	//running on the Pairs <Semaphore, Q>
+				entry_broadcast.getValue().getValue().remove(m);		//removing subscriber m from X_broadcast q
+/** CANCLED*/ /*
 			ConcurrentLinkedQueue<Class<? extends Message>> class_q_of_sub = subscriber_msg_type_map.get(m).getValue(); // getting classes q of m
 			subscriber_msg_type_map.remove(m, new Pair (new ConcurrentLinkedQueue<>(), new ConcurrentLinkedQueue<>()));	// creating new subscriber1
 			for( Class<? extends Message> class_msg: class_q_of_sub){			//for each kind of class_type that subscribed
 				ConcurrentLinkedQueue<Subscriber> curr_sub_q;
-				if(class_msg.isInstance(Broadcast.class))						//copy q of the specified msg
+				boolean check = class_msg.getClass() instanceof Broadcast;
+				if( class_msg.isInstance(Broadcast.class))						//copy q of the specified msg
 					curr_sub_q = broadcast_q_map.get(class_msg).getValue();
 				else
 					curr_sub_q = events_q_map.get(class_msg).getValue();
 				curr_sub_q.remove(m);											//remove the subscriber from the q
 			}
+*/
 		}
 		//------------end edit - 19/12----------------------**/
 	}
@@ -333,14 +375,17 @@ public class MessageBrokerImpl implements MessageBroker {
 		synchronized (m){
 			if(!subscriber_msg_type_map.containsKey(m))					//if the subscriber is NOT in the hash table
 				throw new InterruptedException();
-			while(subscriber_msg_type_map.get(m).getKey().isEmpty())	//the q is empty, so wait for a message
-				subscriber_msg_type_map.get(m).getKey().wait();			// wait loop...
+			while(subscriber_msg_type_map.get(m).isEmpty())				//the q is empty, so wait for a message
+				m.wait();
+				//subscriber_msg_type_map.get(m).getKey().wait();			// wait loop...
 
 			if(terminate_received) {
 				return new TerminateBroadcast();                            // force send of terminate broadcast !!!
 			}
-			else
-				return subscriber_msg_type_map.get(m).getKey().poll();		// pool your message
+			else {
+				Message msg = subscriber_msg_type_map.get(m).poll();        // pool your message
+				return msg;        // send your message
+			}
 		}
 		//------------end edit - 21/12----------------------**/
 	}

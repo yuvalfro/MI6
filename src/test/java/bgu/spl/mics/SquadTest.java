@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SquadTest {
+/*
     private Squad sqd_tst;
     private Agent agents[];
-
     @BeforeEach
     public void setUp() {
         sqd_tst = Squad.getInstance();
@@ -35,7 +35,7 @@ public class SquadTest {
     @Test
     public void load() {
         Assertions.assertEquals(2,sqd_tst.getAgentsMap().size());
-        Assertions.assertTrue(sqd_tst.getAgentsMap().containsKey("007"));
+       Assertions.assertTrue(sqd_tst.getAgentsMap().containsKey("007"));
         Assertions.assertTrue(sqd_tst.getAgentsMap().containsKey("0012"));
         Agent c = new Agent("001","Splflix");
         Agent agents_ext [] = new Agent[] {c};
@@ -75,4 +75,6 @@ public class SquadTest {
         assertTrue(names.contains("Yuval F"));
         assertTrue(names.contains("Omer L"));
     }
+
+ */
 }

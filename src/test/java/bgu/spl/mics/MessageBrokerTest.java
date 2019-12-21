@@ -21,7 +21,7 @@ public class MessageBrokerTest {
     @BeforeEach
     public void setUp(){
         msgBrkr = MessageBrokerImpl.getInstance();
-        subscriber_monpen = new Moneypenny();
+      //  subscriber_monpen = new Moneypenny();
         subscriber_m = new M();
     }
 

@@ -31,6 +31,8 @@ public class Squad {
 
 	/** Constructor */
 	private Squad(){
+		this.agents = new HashMap<>();
+		this.agents_semaphore_map = new ConcurrentHashMap<>();
 		this.terminated = false;
 	}
 

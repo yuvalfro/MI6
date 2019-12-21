@@ -32,7 +32,7 @@ public class FutureTest {
     }
 
     @Test
-    public void getTimed(){
+    public void getTimed() throws InterruptedException {
         assertNull(future.get(0,TimeUnit.MILLISECONDS));
     }
 }

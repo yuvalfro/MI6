@@ -62,8 +62,8 @@ public class Future<T> {
 			if(!isDone){
 				this.result=result;
 				isDone=true;
-				this.notifyAll();				//Wake up the threads that waits for answer
 			}
+			this.notifyAll();				//Wake up the threads that waits for answer
 		}
 		//------------end edit - 16/12----------------------**/
 	}

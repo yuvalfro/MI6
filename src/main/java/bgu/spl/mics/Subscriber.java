@@ -23,8 +23,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class Subscriber extends RunnableSubPub {
     private boolean terminated = false;
     //------------start edit - 19/12 --------------------**/
-    ConcurrentHashMap < Class<? extends Event>, Callback> event_callback_map;
-    ConcurrentHashMap < Class<? extends Broadcast>, Callback> broadcast_callback_map;
+    ConcurrentHashMap < Class<? extends Event>, Callback> event_callback_map = new ConcurrentHashMap<>();
+    ConcurrentHashMap < Class<? extends Broadcast>, Callback> broadcast_callback_map = new ConcurrentHashMap<>();
     //------------end edit - 19/12----------------------**/
 
     /**
@@ -128,18 +128,19 @@ public abstract class Subscriber extends RunnableSubPub {
         //------------end edit - 19/12----------------------**/
         initialize();                   // this function is of runnableSubPun, which M Q and more will use
         while (!terminated) {
-            //------------start edit - 19/12 --------------------**/
+            //------------start edit - 21/12 --------------------**/
 
             try {
                 Message curr_msg = MessageBrokerImpl.getInstance().awaitMessage(this);      //waiting for msg
-                if( curr_msg.getClass().isInstance(Event.class)){
-                    event_callback_map.get(curr_msg).call(curr_msg);                           // calling callback
+                if( curr_msg instanceof Event){
+                    event_callback_map.get(curr_msg.getClass()).call(curr_msg);                           // calling callback
                 } //TODO watch for curr_msg sended to callback (mayabe not right)
-                else
-                    broadcast_callback_map.get(curr_msg).call(curr_msg);                       // calling callback
+                else { // curr_msg instanceof Broadcast
+                    broadcast_callback_map.get(curr_msg.getClass()).call(curr_msg);                   // calling callback
+                }
             } catch (InterruptedException e) {}
         }
         MessageBrokerImpl.getInstance().unregister(this);   // unregister the subscriber
-            //------------end edit - 19/12----------------------**/
+            //------------end edit - 21/12----------------------**/
     }
 }

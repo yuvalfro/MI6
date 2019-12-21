@@ -13,15 +13,15 @@ public class Agent {
 	//------------start edit -------------------
 	private String SerialNumber;
 	private String Name;
-	private boolean available;
+	private boolean available=true;
 
 	/** Constructor */
 	// TODO check threads
-	public Agent(String SerialNumber, String Name){
+	/*public Agent(String SerialNumber, String Name){
 		this.SerialNumber=SerialNumber;
 		this.Name=Name;
 		this.available=true;
-	}
+	} */
 	//------------end edit ---------------------
 
 	/**
@@ -30,7 +30,7 @@ public class Agent {
 	public void setSerialNumber(String serialNumber) {
 		// TODO check threads
 		//------------start edit -------------------
-		this.SerialNumber=SerialNumber;
+		this.SerialNumber=serialNumber;
 		//------------end edit ---------------------
 	}
 

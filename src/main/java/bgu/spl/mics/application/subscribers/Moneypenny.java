@@ -76,7 +76,8 @@ public class Moneypenny extends Subscriber {
 			Squad.getInstance().terminate();		    //SETTER - change the field to true in the Squad and woke up every mp
 			ConcurrentHashMap<String, Semaphore> agent_semaphore_map = Squad.getInstance().getAgentSemaphoreMap();		//GETTER
 			for(Map.Entry<String, Semaphore> entry : agent_semaphore_map.entrySet()) {	//running on the agent,semaphore
-				entry.getValue().notifyAll();			//to wake up MP that is waiting for agents (in the function Squad.getAgents()
+				entry.getValue().release();			//to wake up MP that is waiting for agents (in the function Squad.getAgents()
+				entry.getValue().notifyAll();
 			}
 			this.terminate();
 		});
