@@ -53,11 +53,10 @@ public class Q extends Subscriber {
 		//using lambda expression
 		this.subscribeEvent(GadgetAvailableEvent.class, (GadgetAvailableEvent e) ->
 		{
-			//TODO implement what to do when Q got an event
 			ArrayList<Object> tmp_arraylist = new ArrayList<>();
 			tmp_arraylist.add( Inventory.getInstance().getItem(e.getNeededGadget()) );				//getting the gadget for the mission, and adding result to this event
-			tmp_arraylist.add( curr_tick );
-			tmp_arraylist.add( e.getNeededGadget() );
+			tmp_arraylist.add( curr_tick );				//QTime
+			tmp_arraylist.add( e.getNeededGadget() );	//gadget string
 
 			complete(e , tmp_arraylist);			//e has future <pair of (QTime , Gadget string>
 			// Future is < boolean of the gadget - if its there ,  QTime that it got the message at , the String of the gadget  >

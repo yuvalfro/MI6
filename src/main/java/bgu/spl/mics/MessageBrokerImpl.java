@@ -1,8 +1,7 @@
 package bgu.spl.mics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.BlockingDeque;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
@@ -13,7 +12,7 @@ import java.util.concurrent.Semaphore;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBrokerImpl implements MessageBroker {
-	//------------start edit - 17/12 --------------------**/
+	//------------start edit - 21/12 --------------------**/
 
 		//private ConcurrentHashMap<Subscriber,Semaphore> subscriber_semaphore_map;
 		//		//each subscriber has its own semaphore. need to catch it to delete for example
@@ -26,12 +25,13 @@ public class MessageBrokerImpl implements MessageBroker {
 			//each broadcast has its own events
 	private ConcurrentHashMap <Event,Future> future_event_map;
 			//each event has it's own future object
+	private boolean terminate_received;			//for checking termination msg
 
 	/** for signleton - thread safe*/
 	private static class SingletonHolder {
 		private static MessageBroker mb_instance = new MessageBrokerImpl();
 	} // get instance like TIRGUL 8
-	//------------end edit - 17/12----------------------**/
+	//------------end edit - 21/12----------------------**/
 
 	//------------start edit - 17/12 --------------------**/
 	/** Constructor */
@@ -41,6 +41,7 @@ public class MessageBrokerImpl implements MessageBroker {
 		broadcast_q_map = new ConcurrentHashMap<>();
 		events_q_map = new ConcurrentHashMap<>();
 		future_event_map = new ConcurrentHashMap<>();
+		terminate_received = false;
 	}
 	//------------end edit - 17/12----------------------**/
 	/**
@@ -159,6 +160,9 @@ public class MessageBrokerImpl implements MessageBroker {
 	public void sendBroadcast(Broadcast b) {
 		// TODO Auto-generated method stub
 		//------------start edit - 18/12 --------------------**/
+		if(b.getClass().isInstance(TerminateBroadcast.class))		//changing the flag for the terminate broadcast!
+			terminate_received = true;
+
 		if(broadcast_q_map.containsKey(b.getClass())){							//checks if broadcast still in the topic map
 			Pair <Semaphore,ConcurrentLinkedQueue<Subscriber>> broadcast_pair = broadcast_q_map.get(b.getClass());		//for iterator on broadcast_pair queue of subscribers
 			for (Subscriber sub: broadcast_pair.getValue()) {
@@ -195,7 +199,7 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		// TODO Auto-generated method stub
-		//------------start edit - 18/12 --------------------**/
+		//------------start edit - 21/12 --------------------**/
 		if( (!events_q_map.containsKey(e.getClass())) || (events_q_map.get(e.getClass()).getValue().peek()==null) ) {	// no such event, or no subscriber's queue
 			return null;
 		}
@@ -290,7 +294,7 @@ public class MessageBrokerImpl implements MessageBroker {
 			return null;
 		}
 		*/
-		//------------end edit - 18/12----------------------**/
+		//------------end edit - 21/12----------------------**/
 	}
 
 	@Override
@@ -325,14 +329,19 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public Message awaitMessage(Subscriber m) throws InterruptedException {
 		// TODO Auto-generated method stub
-		//------------start edit - 19/12 --------------------**/
+		//------------start edit - 21/12 --------------------**/
 		synchronized (m){
 			if(!subscriber_msg_type_map.containsKey(m))					//if the subscriber is NOT in the hash table
 				throw new InterruptedException();
 			while(subscriber_msg_type_map.get(m).getKey().isEmpty())	//the q is empty, so wait for a message
 				subscriber_msg_type_map.get(m).getKey().wait();			// wait loop...
-			return subscriber_msg_type_map.get(m).getKey().poll();		// pool your message
+
+			if(terminate_received) {
+				return new TerminateBroadcast();                            // force send of terminate broadcast !!!
+			}
+			else
+				return subscriber_msg_type_map.get(m).getKey().poll();		// pool your message
 		}
-		//------------end edit - 19/12----------------------**/
+		//------------end edit - 21/12----------------------**/
 	}
 }

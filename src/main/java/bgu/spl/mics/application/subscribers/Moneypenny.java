@@ -8,6 +8,9 @@ import com.sun.org.apache.xpath.internal.functions.FuncRound;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 /**
  * Only this type of Subscriber can access the squad.
@@ -38,8 +41,8 @@ public class Moneypenny extends Subscriber {
 	@Override
 	protected void initialize() {
 		//TODO: watch for specified moneypenny to handle SENDAGENTS and RELEASEDAGENTS
-		//------------start edit - 20/12 --------------------**/
-		if(curr_mp_count <= Math.ceil(mp_total / 2.5)){				//only the 33% of the mp will be SEND & RELEASE
+		//------------start edit - 21/12 --------------------**/
+		if(curr_mp_count <= Math.ceil(mp_total / 2.5)){				//only the 25% of the mp will be SEND & RELEASE
 			this.subscribeEvent(SendAgentsEvent.class, (SendAgentsEvent e) ->{
 				Squad.getInstance().sendAgents(e.sendAgentsInfo() , e.getTimeForMission());
 
@@ -62,7 +65,7 @@ public class Moneypenny extends Subscriber {
 		else{														//The upper 66% will be AgentsAvailableEvent
 			this.subscribeEvent(AgentsAvailableEvent.class, (AgentsAvailableEvent e) ->
 			{
-				complete(e , Squad.getInstance().getAgents(e.getNeededAgents()));
+				complete(e , Squad.getInstance().getAgents(e.getNeededAgents())); /**BEWARE: may stuck there when terminated!!! */
 				//getting the gadget for the mission, and adding result to this event
 				// e.getNeededAgents is the function of the class AgentsAvailableEvent
 			} );
@@ -70,9 +73,14 @@ public class Moneypenny extends Subscriber {
 
 		this.subscribeBroadcast(TerminateBroadcast.class, (TerminateBroadcast e) ->
 		{
+			Squad.getInstance().terminate();		    //SETTER - change the field to true in the Squad and woke up every mp
+			ConcurrentHashMap<String, Semaphore> agent_semaphore_map = Squad.getInstance().getAgentSemaphoreMap();		//GETTER
+			for(Map.Entry<String, Semaphore> entry : agent_semaphore_map.entrySet()) {	//running on the agent,semaphore
+				entry.getValue().notifyAll();			//to wake up MP that is waiting for agents (in the function Squad.getAgents()
+			}
 			this.terminate();
 		});
-		//------------end edit - 20/12----------------------**/
+		//------------end edit - 21/12----------------------**/
 	}
 
 }

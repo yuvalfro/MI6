@@ -43,16 +43,8 @@ public class M extends Subscriber {
 
 		//using lambda expression
 		this.subscribeEvent(MissionReceivedEvent.class, (MissionReceivedEvent e) -> {
-			AgentsAvailableEvent new_agentAvailEvent = new AgentsAvailableEvent(e.getMissionInfo().getSerialAgentsNumbers());
-					//creating event available agents we want for the mission
-			Future<Boolean> future_agentAvail = getSimplePublisher().sendEvent(new_agentAvailEvent);
-					//Future object we make for the AgentAvailEvent
-					/** if future is true - all agents are NOT available right now
-					 * sends the event by SIMPLEPUBLISHER because we are not allowed to connect with the MessageBroker Directly
-					 * LOGIC: first get agents -> than get gadget
-					 * */
-
 			/** FOR REPORT: added the reported stuff to the diary*/
+			//Diary update:
 			synchronized (Diary.getInstance()) {
 				Diary.getInstance().incrementTotal();    //increment mission received - can be messed up when multi-M instances will increment
 			}
@@ -63,23 +55,34 @@ public class M extends Subscriber {
 			curr_report.setMissionName(e.getMissionInfo().getMissionName());					// Mission Name
 			curr_report.setM(curr_m_number);													// M number
 
+			AgentsAvailableEvent new_agentAvailEvent = new AgentsAvailableEvent(e.getMissionInfo().getSerialAgentsNumbers());
+			//creating event available agents we want for the mission
+			Future<Boolean> future_agentAvail = getSimplePublisher().sendEvent(new_agentAvailEvent);
+			//Future object we make for the AgentAvailEvent
+			 /** sends the event by SIMPLEPUBLISHER because we are NOT allowed to connect with the MessageBroker Directly
+			 * LOGIC: first get agents -> than get gadget -> than check time & update diarrhea */
+
 			//TODO: assumption - make AGENTS UNavailable from squad methods
 			if(future_agentAvail.get()) { // if agents are available - we marked them as isAvailable=false
-				/** MADE sure that SQUAD.JAVA is thread safe for those actions*/
-				GadgetAvailableEvent new_gadgetAvailEvent = new GadgetAvailableEvent(e.getMissionInfo().getGadget());
-				//creating event available gadget we want for the mission
-				Future< ArrayList<Object> > future_gadgetAvail = getSimplePublisher().sendEvent(new_gadgetAvailEvent);
-				//Future object we make for the GadgetAvailEvent
+				/** __if this ^ future is true__ - all agents are available right now
+				 * __else__: no such agent, return false _OR_ terminated broadcast will return false
+				/** MADE sure that SQUAD is thread safe for those actions*/
+				GadgetAvailableEvent new_gadgetAvailEvent = new GadgetAvailableEvent(e.getMissionInfo().getGadget());				//creating event available gadget we want for the mission
+				Future< ArrayList<Object> > future_gadgetAvail = getSimplePublisher().sendEvent(new_gadgetAvailEvent);				//Future object we make for the GadgetAvailEvent
+
 				if ((boolean)future_gadgetAvail.get().get(0)) {	//if gadget is available - we took it and deleted it
-					/** MADE sure that INVENTORY.JAVA is thread safe for those actions */
+					/** __if this ^ future is true__ - gadget is available
+					 * __else__: no such gadget, return false.    no otermination proccess because GadgetAvail is fast
+					/** MADE sure that INVENTORY is thread safe for those actions */
 					int Duration = e.getMissionInfo().getDuration();
 					int MissionEnd = e.getMissionInfo().getTimeExpired();
 					int ENDOFTIME = TimeService.getInstance().getTotal_tick();
 					if (curr_tick+Duration<=MissionEnd && curr_tick+Duration<=ENDOFTIME) {
 						SendAgentsEvent new_sendAgentsEvent = new SendAgentsEvent(e.getMissionInfo().getSerialAgentsNumbers(),
 								e.getMissionInfo().getDuration()); // sending the agents we want to send and the time for the mission
-						Future<ArrayList<Object>> future_sendAgents = getSimplePublisher().sendEvent(new_sendAgentsEvent);
-						// Future object we make for the SendAgents
+						Future<ArrayList<Object>> future_sendAgents = getSimplePublisher().sendEvent(new_sendAgentsEvent);						// Future object we make for the SendAgents
+
+						//Diary update:
 						curr_report.setMoneypenny( (int)future_sendAgents.get().get(0) );				// adding MP# to the report
 						curr_report.setAgentsNames( (List<String>)future_sendAgents.get().get(1) );		// adding AgentsNames to the report
 						curr_report.setGadgetName( (String)future_gadgetAvail.get().get(1) );			// adding the gadget to the report
@@ -88,6 +91,7 @@ public class M extends Subscriber {
 						synchronized (Diary.getInstance()) {				//insertion should be safe
 							Diary.getInstance().addReport(curr_report);
 						}
+
 						/** now the agents will released after the duration of the mission!!! */
 						complete(e, "Completed");
 					}

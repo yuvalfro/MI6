@@ -129,6 +129,7 @@ public abstract class Subscriber extends RunnableSubPub {
         initialize();                   // this function is of runnableSubPun, which M Q and more will use
         while (!terminated) {
             //------------start edit - 19/12 --------------------**/
+
             try {
                 Message curr_msg = MessageBrokerImpl.getInstance().awaitMessage(this);      //waiting for msg
                 if( curr_msg.getClass().isInstance(Event.class)){

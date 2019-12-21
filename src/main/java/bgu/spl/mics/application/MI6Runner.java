@@ -7,20 +7,21 @@ package bgu.spl.mics.application;
 public class MI6Runner {
     public static void main(String[] args) {
         // TODO Implement this
-        //------------start edit - 20/12 --------------------**/
+        //------------start edit - 21/12 --------------------**/
          //TODO: read input file
-        //------------end edit - 20/12----------------------**/
+        
+        //------------end edit - 21/12----------------------**/
 
-        //------------start edit - 20/12 --------------------**/
+        //------------start edit - 21/12 --------------------**/
         //TODO: create passive object - inventory squad and agents
-        //------------end edit - 20/12----------------------**/
+        //------------end edit - 21/12----------------------**/
 
-        //------------start edit - 20/12 --------------------**/
+        //------------start edit - 21/12 --------------------**/
         //TODO: create and initialize the subscribers and publishers
         //------------end edit - 20/12----------------------**/
 
-        //------------start edit - 20/12 --------------------**/
+        //------------start edit - 21/12 --------------------**/
         //TODO: after termination - (terminate gracefully) generate output files
-        //------------end edit - 20/12----------------------**/
+        //------------end edit - 21/12----------------------**/
     }
 }

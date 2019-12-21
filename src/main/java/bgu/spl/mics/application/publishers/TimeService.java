@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * TimeService is the global system timer There is only one instance of this Publisher.
  * It keeps track of the amount of ticks passed since initialization and notifies
- * all other subscribers about the current time tick using {@link Tick Broadcast}.
+ * all other subscribers about the current time tick using {@link //Tick Broadcast}.
  * This class may not hold references for objects which it is not responsible for.
  * 
  * You can add private fields and public methods to this class.
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class TimeService extends Publisher {
 	//------------start edit - 20/12 --------------------**/
 	private int time_tick;
-	private int tick_delay;
+	private int TICK_DELAY;
 	private int total_tick;
 
 	// for signleton - thread safe
@@ -33,7 +33,7 @@ public class TimeService extends Publisher {
 	public TimeService(int total_tick) {
 		//------------start edit - 20/12 --------------------**/
 		super("TimeService");
-		this.tick_delay=100;			//100 milisec
+		this.TICK_DELAY=100;			//100 milisec
 		this.total_tick=total_tick;
 		this.time_tick=0;
 		SingletonHolder.ts_instance = this;
@@ -44,20 +44,24 @@ public class TimeService extends Publisher {
 	@Override
 	protected void initialize() {
 		//------------start edit - 20/12 --------------------**/
-		// TODO Implement this - what should be here ???????????????????????
+		// TODO Implement this
+		/**  we do not need to subscribe it to anything */
 		//------------end edit - 20/12----------------------**/
 	}
 
 	@Override
 	public void run() {
 		//------------start edit - 20/12 --------------------**/
-		while(time_tick <= total_tick){
+		while(time_tick < total_tick){
 			try {
-				TimeUnit.MILLISECONDS.sleep(tick_delay);
+				TimeUnit.MILLISECONDS.sleep(TICK_DELAY);
 			} catch (InterruptedException e) {	}
 			time_tick++;
-			getSimplePublisher().sendBroadcast(new TickBroadcast(time_tick));
+			getSimplePublisher().sendBroadcast(new TickBroadcast(time_tick));	//sending a tick broadcast each tick
 		}
+		try {
+			TimeUnit.MILLISECONDS.sleep(TICK_DELAY);		// last tick is a terminate broadcast
+		} catch (InterruptedException e) {	}
 		getSimplePublisher().sendBroadcast(new TerminateBroadcast());
 		//------------end edit - 20/12----------------------**/
 	}

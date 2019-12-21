@@ -22,6 +22,7 @@ public class Squad {
 	private Map<String, Agent> agents;
 	//------------start edit -20/12 -------------------
 	private ConcurrentHashMap<String, Semaphore> agents_semaphore_map;
+	private boolean terminated;
 
 	/** for signleton - thread safe*/
 	private static class SingletonHolder {
@@ -30,6 +31,7 @@ public class Squad {
 
 	/** Constructor */
 	private Squad(){
+		this.terminated = false;
 	}
 
 	//------------end edit - 20/12 ---------------------
@@ -76,6 +78,7 @@ public class Squad {
 	 */
 	public void sendAgents(List<String> serials, int time) throws InterruptedException {
 		/** ASSUMPTION: will happen only after getAgents will return true*/
+		/** no worry of TERMINATE: we already checked that we have enough time */
 		//------------start edit - 20/12 -------------------
 		for(String curr_serial: serials){				/** SHOULD BE ALREADY FALSE IN THE AGENT FIELD*/
 			agents.get(curr_serial).acquire(); 			//acquired agent from AGENT.JAVA
@@ -111,6 +114,10 @@ public class Squad {
 			curr_semaphore.acquire(); /***/
 			while(!curr_agent.isAvailable()) {		// if not avail, wait.
 				curr_semaphore.wait();					// wait on the current agent
+				/**BEWARE: may stuck there when moneypenny terminated!!! */
+				/** Solution: */
+				if(terminated)
+					return false;					//termination - EXIT and return false
 			}
 			curr_agent.acquire();					//agent is now available = false
 			curr_semaphore.release();	/***/    	//unlocking the semaphore
@@ -139,5 +146,18 @@ public class Squad {
 
 	//------------start edit - 20/12 -------------------
 	//public Map<String,Agent> getAgentsMap (){	return agents;	}
+
+	//getter of the terminate field
+	public boolean terminated(){		return terminated;}
+
+	//setter of the terminate field
+	public void terminate(){
+    	this.terminated=true;
+    }
+
+    //getter of the agents semaphore map
+	public ConcurrentHashMap<String, Semaphore> getAgentSemaphoreMap(){
+    	return agents_semaphore_map;
+	}
 	//------------end edit - 20/12---------------------
 }

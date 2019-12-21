@@ -40,7 +40,7 @@ public class Future<T> {
 		//TODO: implement this.
 		//------------start edit - 19/12----------------------**/
 		synchronized (this){
-			if (!isDone)		//changed from while to if
+			if (!isDone)		//changed from while to if - ONLY 1 TIME resolve is done
 			{
 				try {
 					this.wait();
@@ -49,7 +49,6 @@ public class Future<T> {
 			//this.notifyAll();
 			return this.result;
 		}
-		//TODO: add wait until complete
 		//------------end edit - 19/12-----------------------**/
 	}
 	
@@ -74,9 +73,7 @@ public class Future<T> {
      */
 	public boolean isDone() {
 		//------------start edit - 16/12--------------------/
-		synchronized (this) {
-			return isDone;
-		}
+		return isDone;		//no need for sync - the isDone is only by reading
 		//------------end edit - 16/12----------------------/
 	}
 	
@@ -99,8 +96,7 @@ public class Future<T> {
 			}	//only 1 time will be resolved, than it surely made isDone=true
 			return result;
 		}
-		//TODO: implement this.
-		//TODO: using timer
+		//TODO: when do we use it ?????????????????
 /*		synchronized (this){
 			while (!isDone & timeout>0); //busy wait
 				//timeout t = unit.wait(timeout);

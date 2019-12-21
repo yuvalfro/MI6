@@ -41,7 +41,6 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (String[] inventory) {
-		// TODO Check Threads
 		//------------start edit - 20/12-------------------
 		for(int i=0; i<inventory.length; i++){
 			gadgets.add(inventory[i]);
