@@ -10,14 +10,10 @@ import bgu.spl.mics.application.subscribers.Q;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.Squad;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import com.google.gson.*;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 /** This is the Main class of the application. You should parse the input file,
