@@ -40,6 +40,7 @@ public class M extends Subscriber {
 		//using lambda expression
 		this.subscribeBroadcast(TickBroadcast.class, (TickBroadcast b) -> {
 			this.curr_tick = b.getCurrTick();
+			if(curr_tick>5){ System.out.println("Now its after 5 tick!!!");}//TODO: REMOVE THIS TEST
 				});	//this broadcast is a TickBroadcast which informs us of an update on the time ticks
 
 		//using lambda expression
@@ -71,7 +72,7 @@ public class M extends Subscriber {
 				GadgetAvailableEvent new_gadgetAvailEvent = new GadgetAvailableEvent(e.getMissionInfo().getGadget());				//creating event available gadget we want for the mission
 				Future< ArrayList<Object> > future_gadgetAvail = getSimplePublisher().sendEvent(new_gadgetAvailEvent);				//Future object we make for the GadgetAvailEvent
 
-				future_gadgetAvail.get((long)e.getMissionInfo().getDuration(), TimeUnit.MILLISECONDS); 	//it will wait if searching - for most the duration of the mission
+				future_gadgetAvail.get((long)e.getMissionInfo().getDuration()-1, TimeUnit.MILLISECONDS); 	//it will wait if searching - for most the duration of the mission
 				if (future_gadgetAvail!=null && (boolean)future_gadgetAvail.get().get(0)) {	//if gadget is available - we took it and deleted it
 					/** __if this ^ future is true__ - gadget is available
 					 * __else__: no such gadget, return false.    no otermination proccess because GadgetAvail is fast
@@ -87,9 +88,10 @@ public class M extends Subscriber {
 						//Diary update:
 						curr_report.setMoneypenny( (int)future_sendAgents.get().get(0) );				// adding MP# to the report
 						curr_report.setAgentsNames( (List<String>)future_sendAgents.get().get(1) );		// adding AgentsNames to the report
-						curr_report.setGadgetName( (String)future_gadgetAvail.get().get(1) );			// adding the gadget to the report
-						curr_report.setQTime( (int)future_gadgetAvail.get().get(2) );					// adding QTime to the report
+						curr_report.setGadgetName( future_gadgetAvail.get().get(2).toString() );			// adding the gadget to the report
+						curr_report.setQTime( ((int) future_gadgetAvail.get().get(1)));					// adding QTime to the report
 						curr_report.setTimeCreated(curr_tick);											// adding TimeCreated
+						System.out.println("M "+curr_m_number+" at tick time: " +curr_tick);	//TODO: REMOVE THIS TEST
 						synchronized (Diary.getInstance()) {				//insertion should be safe
 							Diary.getInstance().addReport(curr_report);
 						}

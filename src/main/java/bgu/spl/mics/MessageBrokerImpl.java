@@ -19,7 +19,7 @@ public class MessageBrokerImpl implements MessageBroker {
 		//private ConcurrentHashMap<Subscriber,Semaphore> subscriber_semaphore_map;
 		//		//each subscriber has its own semaphore. need to catch it to delete for example
 	private ConcurrentHashMap< Subscriber, ConcurrentLinkedQueue<Message> > subscriber_msg_type_map;
-			//each subscriber will go into map and have it's own Q   &   types of messages to find when delete
+			//each subscriber will go into map and have it's own Queue
 			//  Semaphore is for fairness!!!
 	private ConcurrentHashMap < Class<? extends Event> , Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>>> events_q_map;
 			//each topic has its own events
@@ -202,28 +202,30 @@ public class MessageBrokerImpl implements MessageBroker {
 	public <T> Future<T> sendEvent(Event<T> e) {
 		// TODO Auto-generated method stub
 		//------------start edit - 21/12 --------------------**/
-		if ((!events_q_map.containsKey(e.getClass())) || (events_q_map.get(e.getClass()).getValue().peek() == null)) {    // no such event, or no subscriber's queue
+		if ((!events_q_map.containsKey(e.getClass())) || (events_q_map.get(e.getClass()).getValue().isEmpty())) {    // no such event, or no subscriber's queue
 			return null;
 		} else {
-			Subscriber sub = events_q_map.get(e.getClass()).getValue().peek();
 			Future<T> future_event = new Future<T>();
-			synchronized (sub) {
+			future_event_map.put(e, future_event);                            // adding new <event,future> to the map
+			Subscriber sub = events_q_map.get(e.getClass()).getValue().peek();
+			synchronized ( sub ) {
 				//TODO: watch for unregistering
 				Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>> event_pair = events_q_map.get(e.getClass());
 				try {
-					event_pair.getKey().acquire();
+					event_pair.getKey().acquire();									 // catching the semaphore for fairness in deQ and enQ
+
 					Subscriber first = event_pair.getValue().poll();                 //dequeue first subscriber
 					event_pair.getValue().add(first);                                //enqueue first to be the last
 					subscriber_msg_type_map.get(sub).add(e);                         // add the message e to sub queue
 					sub.notifyAll();                                                    // awake for the AWAIT MESSAGE
+
 					event_pair.getKey().release();
 				} catch (InterruptedException ex) {
 				}
 			}
-			future_event_map.put(e, future_event);                            // adding new <event,future> to the map
 			future_event.get();
 			return future_event;
-		}	
+		}
 	}
 
 

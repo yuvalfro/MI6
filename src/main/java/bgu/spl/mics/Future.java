@@ -92,7 +92,8 @@ public class Future<T> {
 		//------------start edit - 16/12--------------------/
 		synchronized (this){
 			if(!isDone){
-				this.wait(unit.toNanos(timeout));	//waits untill passed time, or notified
+				unit.timedWait(this,timeout);	//waits untill passed time, or notified
+			// old configure:	this.wait(unit.toMillis(timeout));
 			}	//only 1 time will be resolved, than it surely made isDone=true
 			return result;
 		}

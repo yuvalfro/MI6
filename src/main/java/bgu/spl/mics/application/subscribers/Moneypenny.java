@@ -2,12 +2,14 @@ package bgu.spl.mics.application.subscribers;
 
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.messages.*;
+import bgu.spl.mics.application.passiveObjects.Agent;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.Squad;
 import com.sun.org.apache.xpath.internal.functions.FuncRound;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
@@ -65,7 +67,8 @@ public class Moneypenny extends Subscriber {
 		else{														//The upper 66% will be AgentsAvailableEvent
 			this.subscribeEvent(AgentsAvailableEvent.class, (AgentsAvailableEvent e) ->
 			{
-				complete(e , Squad.getInstance().getAgents(e.getNeededAgents())); /**BEWARE: may stuck there when terminated!!! */
+				boolean answer = Squad.getInstance().getAgents(e.getNeededAgents());
+				complete(e ,answer ); /**BEWARE: may stuck there when terminated!!! */
 				//getting the gadget for the mission, and adding result to this event
 				// e.getNeededAgents is the function of the class AgentsAvailableEvent
 			} );
@@ -74,11 +77,18 @@ public class Moneypenny extends Subscriber {
 		this.subscribeBroadcast(TerminateBroadcast.class, (TerminateBroadcast e) ->
 		{
 			Squad.getInstance().terminate();		    //SETTER - change the field to true in the Squad and woke up every mp
-			ConcurrentHashMap<String, Semaphore> agent_semaphore_map = Squad.getInstance().getAgentSemaphoreMap();		//GETTER
+			LinkedList<String> agentsNames = new LinkedList<>();
+			for(Map.Entry<String, Agent> entry : Squad.getInstance().getAgentsMap().entrySet()) 	//running on the map <string, agent> - GETTER
+				agentsNames.add(entry.getKey());
+			Squad.getInstance().releaseAgents( agentsNames );			//releasing all agents - breaking the wait
+		/*	ConcurrentHashMap<String, Semaphore> agent_semaphore_map = Squad.getInstance().getAgentSemaphoreMap();		//GETTER
 			for(Map.Entry<String, Semaphore> entry : agent_semaphore_map.entrySet()) {	//running on the agent,semaphore
-				entry.getValue().release();			//to wake up MP that is waiting for agents (in the function Squad.getAgents()
+				entry.getValue().acquire();
 				entry.getValue().notifyAll();
+				entry.getValue().release();			//to wake up MP that is waiting for agents (in the function Squad.getAgents()
+
 			}
+		*/
 			this.terminate();
 		});
 		//------------end edit - 21/12----------------------**/

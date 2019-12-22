@@ -64,12 +64,12 @@ public class Squad {
 	/**
 	 * Releases agents.
 	 */
-	public void releaseAgents(List<String> serials){
+	public void releaseAgents(List<String> serials) throws InterruptedException {
 		// TODO Check Threads - DONE(?) in M
 		//------------start edit - 20/12 -------------------
 		for(String SN: serials){
 			this.agents.get(SN).release();						//change the value of isAvailable to true
-			this.agents_semaphore_map.get(SN).notifyAll();		// wake up all threads that has been waiting to this agent
+			this.agents_semaphore_map.get(SN).release();		// wake up all threads that has been waiting to this agent
 		}
 		//------------end edit - 20/12 ---------------------
 	}
@@ -147,7 +147,8 @@ public class Squad {
     }
 
 	//------------start edit - 20/12 -------------------
-	//public Map<String,Agent> getAgentsMap (){	return agents;	}
+	//getter of the agents map
+	public Map<String,Agent> getAgentsMap (){	return agents;	}
 
 	//getter of the terminate field
 	public boolean terminated(){		return terminated;}

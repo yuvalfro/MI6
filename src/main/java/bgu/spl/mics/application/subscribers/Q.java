@@ -57,7 +57,7 @@ public class Q extends Subscriber {
 			tmp_arraylist.add( Inventory.getInstance().getItem(e.getNeededGadget()) );				//getting the gadget for the mission, and adding result to this event
 			tmp_arraylist.add( curr_tick );				//QTime
 			tmp_arraylist.add( e.getNeededGadget() );	//gadget string
-
+			System.out.println("Q at tick time: " +curr_tick);	//TODO: REMOVE THIS TEST
 			complete(e , tmp_arraylist);			//e has future <pair of (QTime , Gadget string>
 			// Future is < boolean of the gadget - if its there ,  QTime that it got the message at , the String of the gadget  >
 			// e.getNeededGadget is the function of the class GadgetAvailableEvent
