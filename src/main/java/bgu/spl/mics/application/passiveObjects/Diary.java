@@ -4,6 +4,7 @@ import com.google.gson.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,12 +74,9 @@ public class Diary {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			FileWriter fileWriter = new FileWriter(filename);
 			//TODO: add { at the start and } at the end
-			gson.toJson("reports:", fileWriter);
-			gson.toJson(reports, fileWriter);
-			gson.toJson("total:",fileWriter);
-			gson.toJson(total,fileWriter);
-
-			fileWriter.close();
+			gson.toJson(this,Diary.class,fileWriter);
+			fileWriter.flush(); //flush data to file   <---
+			fileWriter.close(); //close write          <---
 		} catch (IOException e) {}
 
 		//------------end edit - 22/12 ---------------------

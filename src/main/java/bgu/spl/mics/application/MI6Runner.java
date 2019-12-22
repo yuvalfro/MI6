@@ -27,8 +27,8 @@ public class MI6Runner {
 
             /**@DONE: read input file */
             Gson gson = new Gson();
-            Reader reader = new FileReader("..\\MI6\\input201 - 2.json") ;  // TODO: args[0]
-            JsonClass gsonLoad = gson.fromJson(reader,JsonClass.class);
+            Reader reader = new FileReader(args[0]) ;  //args[0] = "..\\MI6\\input201[3].json"
+            JsonClassSerializer gsonLoad = gson.fromJson(reader,JsonClassSerializer.class);
 
 
             /**@DONE: read input file */
@@ -97,13 +97,13 @@ public class MI6Runner {
             System.out.println(diaryOutputJson);                        //TODO: DELETE THIS TEST
 
             //Inventory out:
-            Inventory.getInstance().printToFile("..\\MI6\\inventoryOutputFile.json");   //TODO: args[1]
+            Inventory.getInstance().printToFile(args[1]);   //args[1] = "..\\MI6\\inventoryOutputFile.json"
 
             //Diary out:
-            Diary.getInstance().printToFile("..\\MI6\\diaryOutputFile.json");   //TODO: args[2];
+            Diary.getInstance().printToFile(args[2]);   //args[2] = "..\\MI6\\diaryOutputFile.json"
     }
 
-    public static class JsonClass{
+    public static class JsonClassSerializer{
         public String[] inventory;
         public Services services;
         public Agent[] squad;

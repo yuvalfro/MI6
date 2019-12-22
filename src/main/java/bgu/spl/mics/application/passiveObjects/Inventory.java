@@ -86,10 +86,12 @@ public class Inventory {
 	public void printToFile(String filename){
 		//------------start edit - 22/12 -------------------
 		try {
-			Gson gson = new Gson();
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();;
 			FileWriter fileWriter = new FileWriter(filename);
-			gson.toJson(gadgets, fileWriter);
-			fileWriter.close();
+			//gson.toJson(this,Inventory.class, fileWriter);		//more elegant but not what they did
+			gson.toJson(gadgets,gadgets.getClass(),fileWriter);
+			fileWriter.flush(); //flush data to file   <---
+			fileWriter.close(); //close write          <---
 		} catch (IOException e) {}
 /*
 		JsonArray gadgetsDetails = new JsonArray();
