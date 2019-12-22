@@ -11,8 +11,8 @@ import java.util.concurrent.Semaphore;
  */
 public class Agent {
 	//------------start edit -------------------
-	private String SerialNumber;
-	private String Name;
+	private String serialNumber;
+	private String name;
 	private boolean available=true;
 
 	/** Constructor */
@@ -30,7 +30,7 @@ public class Agent {
 	public void setSerialNumber(String serialNumber) {
 		// TODO check threads
 		//------------start edit -------------------
-		this.SerialNumber=serialNumber;
+		this.serialNumber=serialNumber;
 		//------------end edit ---------------------
 	}
 
@@ -42,7 +42,7 @@ public class Agent {
 	public String getSerialNumber() {
 		// TODO check threads
 		//------------start edit -------------------
-		return this.SerialNumber;
+		return this.serialNumber;
 		//------------end edit ---------------------
 	}
 
@@ -52,7 +52,7 @@ public class Agent {
 	public void setName(String name) {
 		// TODO check threads
 		//------------start edit -------------------
-		this.Name=name;
+		this.name=name;
 		//------------end edit ---------------------
 	}
 
@@ -64,7 +64,7 @@ public class Agent {
 	public String getName() {
 		// TODO check threads
 		//------------start edit -------------------
-		return this.Name;
+		return this.name;
 		//------------end edit ---------------------
 	}
 

@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class MessageBrokerImpl implements MessageBroker {
 	//------------start edit - 21/12 --------------------**/
-
 		//private ConcurrentHashMap<Subscriber,Semaphore> subscriber_semaphore_map;
 		//		//each subscriber has its own semaphore. need to catch it to delete for example
 	private ConcurrentHashMap< Subscriber, ConcurrentLinkedQueue<Message> > subscriber_msg_type_map;
@@ -171,7 +170,7 @@ public class MessageBrokerImpl implements MessageBroker {
 				synchronized (sub) { 											// synchronized THE OBJECT SUBSCRIBER
 					if (subscriber_msg_type_map.containsKey(sub)) {				//checks if subscriber is in UNREGISTER proccess
 						subscriber_msg_type_map.get(sub).add(b);		// add the message b to sub queue //TODO: changed here .getKey()
-						sub.notify();											// awake for the AWAIT MESSAGE
+						sub.notifyAll();											// awake for the AWAIT MESSAGE
 					}
 				}
 			}
@@ -377,9 +376,10 @@ public class MessageBrokerImpl implements MessageBroker {
 		synchronized (m){
 			if(!subscriber_msg_type_map.containsKey(m))					//if the subscriber is NOT in the hash table
 				throw new InterruptedException();
-			while(subscriber_msg_type_map.get(m).isEmpty())				//the q is empty, so wait for a message
+			while(subscriber_msg_type_map.get(m).isEmpty()) {            //the q is empty, so wait for a message
 				m.wait();
 				//subscriber_msg_type_map.get(m).getKey().wait();			// wait loop...
+			}
 
 			if(terminate_received) {
 				return new TerminateBroadcast();                            // force send of terminate broadcast !!!

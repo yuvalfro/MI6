@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class MissionInfo {
 	//------------start edit - 19/12 --------------------**/
-	private String missionName;
+	private String name;
 	private List<String> serialAgentsNumbers;
 	private String gadget;
 	private int timeIssued;
@@ -22,8 +22,8 @@ public class MissionInfo {
 	//------------start edit - 19/12 --------------------**/
 	//Constructor
 	/** why we has constructor if we has setters to everything */
-	public MissionInfo(String missionName, List<String> serialAgentsNumbers, String gadget, int timeIssued, int timeExpired, int duration){
-		this.missionName = missionName;
+	public MissionInfo(String name, List<String> serialAgentsNumbers, String gadget, int timeIssued, int timeExpired, int duration){
+		this.name = name;
 		this.serialAgentsNumbers= serialAgentsNumbers;
 		this.gadget=gadget;
 		this.timeIssued= timeIssued;
@@ -35,9 +35,9 @@ public class MissionInfo {
     /**
      * Sets the name of the mission.
      */
-    public void setMissionName(String missionName) {
+    public void setname(String name) {
     	//------------start edit - 20/12 --------------------**/
-		this.missionName=missionName;
+		this.name=name;
 		//------------end edit - 20/12----------------------**/
     }
 
@@ -46,7 +46,7 @@ public class MissionInfo {
      */
 	public String getMissionName() {
 		//------------start edit - 20/12 --------------------**/
-		return missionName;
+		return name;
 		//------------end edit - 20/12----------------------**/
 	}
 

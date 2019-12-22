@@ -1,5 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import com.google.gson.*;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,7 +68,20 @@ public class Diary {
 	 * This method is called by the main method in order to generate the output.
 	 */
 	public void printToFile(String filename){
-		//TODO: Implement this
+		//------------start edit - 22/12 -------------------
+		try {
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			FileWriter fileWriter = new FileWriter(filename);
+			//TODO: add { at the start and } at the end
+			gson.toJson("reports:", fileWriter);
+			gson.toJson(reports, fileWriter);
+			gson.toJson("total:",fileWriter);
+			gson.toJson(total,fileWriter);
+
+			fileWriter.close();
+		} catch (IOException e) {}
+
+		//------------end edit - 22/12 ---------------------
 	}
 
 	/**

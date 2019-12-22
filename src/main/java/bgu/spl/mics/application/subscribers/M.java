@@ -40,7 +40,7 @@ public class M extends Subscriber {
 		//using lambda expression
 		this.subscribeBroadcast(TickBroadcast.class, (TickBroadcast b) -> {
 			this.curr_tick = b.getCurrTick();
-			if(curr_tick>5){ System.out.println("Now its after 5 tick!!!");}//TODO: REMOVE THIS TEST
+			if(curr_tick==6){ System.out.println("Now its after 5 tick!!!");}//TODO: REMOVE THIS TEST
 				});	//this broadcast is a TickBroadcast which informs us of an update on the time ticks
 
 		//using lambda expression

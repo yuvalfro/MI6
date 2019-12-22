@@ -10,15 +10,15 @@ import java.util.List;
  */
 public class Report {
 	//------------start edit - 20/12-------------------
-	private String MissionName;
-	private int M;
-	private int Moneypenny;
-	private List<String> AgentsSerialNumbers;
-	private List<String> AgentsNames;
-	private String GadgetName;
-	private int QTime;
-	private int TimeIssued;
-	private int TimeCreated;
+	private String missionName;
+	private int m;
+	private int moneypenny;
+	private List<String> agentsSerialNumbers;
+	private List<String> agentsNames;
+	private String gadgetName;
+	private int qTime;
+	private int timeIssued;
+	private int timeCreated;
 
 
 	/** Constructor */
@@ -28,7 +28,7 @@ public class Report {
      */
 	public String getMissionName() {
 		//------------start edit - 20/12-------------------
-		return MissionName;
+		return missionName;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -37,7 +37,7 @@ public class Report {
 	 */
 	public void setMissionName(String missionName) {
 		//------------start edit - 20/12-------------------
-		this.MissionName = missionName;
+		this.missionName = missionName;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -46,7 +46,7 @@ public class Report {
 	 */
 	public int getM() {
 		//------------start edit - 20/12-------------------
-		return M;
+		return m;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -55,7 +55,7 @@ public class Report {
 	 */
 	public void setM(int m) {
 		//------------start edit - 20/12-------------------
-		this.M=m;
+		this.m=m;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -64,7 +64,7 @@ public class Report {
 	 */
 	public int getMoneypenny() {
 		//------------start edit - 20/12-------------------
-		return Moneypenny;
+		return moneypenny;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -73,7 +73,7 @@ public class Report {
 	 */
 	public void setMoneypenny(int moneypenny) {
 		//------------start edit - 20/12-------------------
-		this.Moneypenny=moneypenny;
+		this.moneypenny=moneypenny;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -84,7 +84,7 @@ public class Report {
 	 */
 	public List<String> getAgentsSerialNumbers() {
 		//------------start edit - 20/12-------------------
-		return AgentsSerialNumbers;
+		return agentsSerialNumbers;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -93,7 +93,7 @@ public class Report {
 	 */
 	public void setAgentsSerialNumbers(List<String> agentsSerialNumbers) {
 		//------------start edit - 20/12-------------------
-		this.AgentsSerialNumbers=agentsSerialNumbers;
+		this.agentsSerialNumbers=agentsSerialNumbers;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -104,7 +104,7 @@ public class Report {
 	 */
 	public List<String> getAgentsNames() {
 		//------------start edit - 20/12-------------------
-		return AgentsNames;
+		return agentsNames;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -113,7 +113,7 @@ public class Report {
 	 */
 	public void setAgentsNames(List<String> agentsNames) {
 		//------------start edit - 20/12-------------------
-		this.AgentsNames=agentsNames;
+		this.agentsNames=agentsNames;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -124,7 +124,7 @@ public class Report {
 	 */
 	public String getGadgetName() {
 		//------------start edit - 20/12-------------------
-		return GadgetName;
+		return gadgetName;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -133,7 +133,7 @@ public class Report {
 	 */
 	public void setGadgetName(String gadgetName) {
 		//------------start edit - 20/12-------------------
-		this.GadgetName=gadgetName;
+		this.gadgetName=gadgetName;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -142,7 +142,7 @@ public class Report {
 	 */
 	public int getQTime() {
 		//------------start edit - 20/12-------------------
-		return QTime;
+		return qTime;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -151,7 +151,7 @@ public class Report {
 	 */
 	public void setQTime(int qTime) {
 		//------------start edit - 20/12-------------------
-		this.QTime=qTime;
+		this.qTime=qTime;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -160,7 +160,7 @@ public class Report {
 	 */
 	public int getTimeIssued() {
 		//------------start edit - 20/12-------------------
-		return TimeIssued;
+		return timeIssued;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -169,7 +169,7 @@ public class Report {
 	 */
 	public void setTimeIssued(int timeIssued) {
 		//------------start edit - 20/12-------------------
-		this.TimeIssued=timeIssued;
+		this.timeIssued=timeIssued;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -178,7 +178,7 @@ public class Report {
 	 */
 	public int getTimeCreated() {
 		//------------start edit - 20/12-------------------
-		return TimeCreated;
+		return timeCreated;
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -187,7 +187,7 @@ public class Report {
 	 */
 	public void setTimeCreated(int timeCreated) {
 		//------------start edit - 20/12-------------------
-		this.TimeCreated=timeCreated;
+		this.timeCreated=timeCreated;
 		//------------end edit - 20/12 ---------------------
 	}
 }
