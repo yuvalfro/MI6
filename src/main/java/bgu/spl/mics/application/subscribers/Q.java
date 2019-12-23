@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class Q extends Subscriber {
-	//made sure that there are ONLY 1 PERMIT on the number of INSTANCES! fix it!
+	//made sure that there are ONLY 1 PERMIT on the number of INSTANCES!
 	//------------start edit - 20/12 --------------------**/
 	private int curr_tick;
 	private static int q_count=1;
@@ -37,6 +37,7 @@ public class Q extends Subscriber {
 		super("Q"+q_count);	// Q number #
 		q_count++;
 		SingletonHolder.q_instance = this;
+		//TODO: should we implement this as a "getInstance" or just delete because we created only 1 anyway
 		/** after the first build of the Q, we will insert it to the singleton holder*/
 		//------------end edit - 20/12----------------------**/
 	}
