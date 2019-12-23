@@ -1,6 +1,4 @@
 package bgu.spl.mics.application.passiveObjects;
-import bgu.spl.mics.MessageBroker;
-import bgu.spl.mics.MessageBrokerImpl;
 
 import java.util.HashMap;
 import java.util.LinkedList;

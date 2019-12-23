@@ -3,16 +3,11 @@ package bgu.spl.mics.application.subscribers;
 import bgu.spl.mics.Subscriber;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Agent;
-import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.Squad;
-import com.sun.org.apache.xpath.internal.functions.FuncRound;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 
 /**
  * Only this type of Subscriber can access the squad.

@@ -1,6 +1,5 @@
 package bgu.spl.mics.application;
 
-import bgu.spl.mics.MessageBrokerImpl;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.publishers.TimeService;
 import bgu.spl.mics.application.subscribers.Intelligence;

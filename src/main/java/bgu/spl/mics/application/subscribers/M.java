@@ -5,7 +5,6 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Report;
 import bgu.spl.mics.application.publishers.TimeService;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;

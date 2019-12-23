@@ -1,9 +1,6 @@
 package bgu.spl.mics;
 
-import javafx.util.Pair;
-
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The Subscriber is an abstract class that any subscriber in the system
