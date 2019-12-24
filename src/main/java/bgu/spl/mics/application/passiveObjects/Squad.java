@@ -68,6 +68,9 @@ public class Squad {
 		for(String SN: serials){
 			this.agents.get(SN).release();						//change the value of isAvailable to true
 			this.agents_semaphore_map.get(SN).release();		// wake up all threads that has been waiting to this agent
+/**EDIT*/	synchronized (agents.get(SN)) {
+				this.agents.get(SN).notifyAll();		//notfiy the agent for the getAgents method
+/**EDIT*/	}
 		}
 		//------------end edit - 20/12 ---------------------
 	}
@@ -112,12 +115,15 @@ public class Squad {
 			Semaphore curr_semaphore = agents_semaphore_map.get(curr_serial);	//get it's semaphore
 
 			curr_semaphore.acquire(); /***/
-			while(!curr_agent.isAvailable()) {		// if not avail, wait.
-				curr_semaphore.wait();					// wait on the current agent
-				/**BEWARE: may stuck there when moneypenny terminated!!! */
-				/** Solution: */
-				if(terminated)
-					return false;					//termination - EXIT and return false
+/**EDIT*/	synchronized (curr_agent){		//synch current agent, for waiting on it in the next line
+				while(!curr_agent.isAvailable()) {		// if not avail, wait.
+					curr_agent.wait();					// wait on the current agent - NOT RELEASEING THE SEMAPHORE
+					//TODO: UNDERSTANDING THE SEMAPHORE WAIT
+					/**BEWARE: may stuck there when moneypenny terminated!!! */
+					/** Solution: */
+					if(terminated)
+						return false;					//termination - EXIT and return false
+/**EDIT*/		}
 			}
 			curr_agent.acquire();					//agent is now available = false
 			curr_semaphore.release();	/***/    	//unlocking the semaphore
@@ -126,12 +132,12 @@ public class Squad {
 		//------------end edit - 20/12 ---------------------
 	}
 
-    /**
-     * gets the agents names
-     * @param serials the serial numbers of the agents
-     * @return a list of the names of the agents with the specified serials.
-     */
-    public List<String> getAgentsNames(List<String> serials){
+	/**
+	 * gets the agents names
+	 * @param serials the serial numbers of the agents
+	 * @return a list of the names of the agents with the specified serials.
+	 */
+	public List<String> getAgentsNames(List<String> serials){
 		// TODO Check Threads
 		//------------start edit -------------------
 		/** OMER edit 13/12 **/
@@ -142,7 +148,7 @@ public class Squad {
 		return names;
 		/** OMER end edit 13/12 **/
 		//------------end edit ---------------------
-    }
+	}
 
 	//------------start edit - 20/12 -------------------
 	//getter of the agents map
@@ -153,12 +159,12 @@ public class Squad {
 
 	//setter of the terminate field
 	public void terminate(){
-    	this.terminated=true;
-    }
+		this.terminated=true;
+	}
 
-    //getter of the agents semaphore map
+	//getter of the agents semaphore map
 	public ConcurrentHashMap<String, Semaphore> getAgentSemaphoreMap(){
-    	return agents_semaphore_map;
+		return agents_semaphore_map;
 	}
 	//------------end edit - 20/12---------------------
 }
