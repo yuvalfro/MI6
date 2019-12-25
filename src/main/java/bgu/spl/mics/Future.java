@@ -20,7 +20,6 @@ public class Future<T> {
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
-		//TODO: implement this
 		//------------start edit--------------------**/
 		result = null;
 		isDone = false;
@@ -36,7 +35,6 @@ public class Future<T> {
      * 	       
      */
 	public T get() {
-		//TODO: implement this.
 		//------------start edit - 19/12----------------------**/
 		synchronized (this){
 			if (!isDone)		//changed from while to if - ONLY 1 TIME resolve is done
@@ -55,7 +53,6 @@ public class Future<T> {
      * Resolves the result of this Future object.
      */
 	public void resolve (T result) {
-		//TODO: implement this.
 		//------------start edit - 16/12--------------------**/
 		synchronized (this){
 			if(!isDone){
@@ -96,15 +93,7 @@ public class Future<T> {
 			}	//only 1 time will be resolved, than it surely made isDone=true
 			return result;
 		}
-		//TODO: when do we use it ?????????????????
-/*		synchronized (this){
-			while (!isDone & timeout>0); //busy wait
-				//timeout t = unit.wait(timeout);
-			this.notifyAll();
-			return result;                          //Result initialized as null, so if resolve() won't be activate it will return null
-			}
-*/
-		}
-		//------------end edit - 16/12----------------------/
 	}
+		//------------end edit - 16/12----------------------/
+}
 

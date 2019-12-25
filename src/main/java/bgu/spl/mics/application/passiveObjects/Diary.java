@@ -54,7 +54,7 @@ public class Diary {
 	public void addReport(Report reportToAdd){
 		//------------start edit - 20/12-------------------
 		this.reports.add(reportToAdd);
-		//TODO: ASSUMPTION: in M we will synchronized Diary, that every access to the diary will be thread safe
+		/** ASSUMPTION: in M we will synchronized Diary, that every access to the diary will be thread safe**/
 		//------------end edit - 20/12 ---------------------
 	}
 
@@ -70,7 +70,6 @@ public class Diary {
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			FileWriter fileWriter = new FileWriter(filename);
-			//TODO: add { at the start and } at the end
 			gson.toJson(this,Diary.class,fileWriter);
 			fileWriter.flush(); //flush data to file   <---
 			fileWriter.close(); //close write          <---

@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class M extends Subscriber {
-	//TODO : make sure that there are PERMITS on the number of INSTANCES! fix it!
 	//------------start edit - 19/12 --------------------**/
 	private static int m_count =1;
 	private int curr_tick;			//updates from the TickBroadcast
@@ -34,7 +33,6 @@ public class M extends Subscriber {
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
 		//------------start edit - 19/12 --------------------**/
 		//using lambda expression
 		this.subscribeBroadcast(TickBroadcast.class, (TickBroadcast b) -> {
@@ -62,7 +60,7 @@ public class M extends Subscriber {
 			 /** sends the event by SIMPLEPUBLISHER because we are NOT allowed to connect with the MessageBroker Directly
 			 * LOGIC: first get agents -> than get gadget -> than check time & update diarrhea */
 
-			//TODO: assumption - make AGENTS UNavailable from squad methods
+			/** assumption - make AGENTS UNavailable from squad methods**/
 			if(future_agentAvail.get()) { // if agents are available - we marked them as isAvailable=false
 				/** __if this ^ future is true__ - all agents are available right now
 				 * __else__: no such agent, return false _OR_ terminated broadcast will return false

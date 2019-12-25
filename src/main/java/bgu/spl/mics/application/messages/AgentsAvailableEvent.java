@@ -9,7 +9,7 @@ public class AgentsAvailableEvent implements Event <Boolean>{
 
     public AgentsAvailableEvent(List<String> agentsList){
         this.getNeededAgents = agentsList;
-    } //TODO: M will send a specific list of agents
+    } /**Assumption: M will send a specific list of agents**/
 
     public List<String> getNeededAgents(){
         return this.getNeededAgents;

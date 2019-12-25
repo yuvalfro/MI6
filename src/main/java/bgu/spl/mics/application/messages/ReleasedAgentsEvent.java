@@ -11,7 +11,7 @@ public class ReleasedAgentsEvent implements Event <Boolean>{
 
     public ReleasedAgentsEvent(List<String> agentsList){
         this.releasedAgents = agentsList;
-    } //TODO: M will send a specific list of agents
+    } /**Assumption: M will send a specific list of agents**/
 
     public List<String> getReleasedAgents(){
         return this.releasedAgents;

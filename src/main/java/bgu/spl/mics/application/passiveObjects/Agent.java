@@ -1,8 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
-
 /**
  * Passive data-object representing a information about an agent in MI6.
  * You must not alter any of the given public methods of this class. 
@@ -15,20 +12,12 @@ public class Agent {
 	private String name;
 	private boolean available=true;
 
-	/** Constructor */
-	// TODO check threads
-	/*public Agent(String SerialNumber, String Name){
-		this.SerialNumber=SerialNumber;
-		this.Name=Name;
-		this.available=true;
-	} */
 	//------------end edit ---------------------
 
 	/**
 	 * Sets the serial number of an agent.
 	 */
 	public void setSerialNumber(String serialNumber) {
-		// TODO check threads
 		//------------start edit -------------------
 		this.serialNumber=serialNumber;
 		//------------end edit ---------------------
@@ -40,7 +29,6 @@ public class Agent {
      * @return The serial number of an agent.
      */
 	public String getSerialNumber() {
-		// TODO check threads
 		//------------start edit -------------------
 		return this.serialNumber;
 		//------------end edit ---------------------
@@ -50,7 +38,6 @@ public class Agent {
 	 * Sets the name of the agent.
 	 */
 	public void setName(String name) {
-		// TODO check threads
 		//------------start edit -------------------
 		this.name=name;
 		//------------end edit ---------------------
@@ -62,7 +49,6 @@ public class Agent {
      * @return the name of the agent.
      */
 	public String getName() {
-		// TODO check threads
 		//------------start edit -------------------
 		return this.name;
 		//------------end edit ---------------------
@@ -74,7 +60,6 @@ public class Agent {
      * @return if the agent is available.
      */
 	public boolean isAvailable() {
-		// TODO check threads
 		//------------start edit -------------------
 		return this.available;
 		//------------end edit ---------------------
@@ -84,7 +69,6 @@ public class Agent {
 	 * Acquires an agent.
 	 */
 	public void acquire(){
-		// TODO check threads
 		//------------start edit -------------------
 		this.available = false;
 		//------------end edit ---------------------
@@ -94,7 +78,6 @@ public class Agent {
 	 * Releases an agent.
 	 */
 	public void release(){
-		// TODO check threads
 		//------------start edit -------------------
 		this.available = true;
 		//------------end edit ---------------------

@@ -63,11 +63,14 @@ public class Squad {
 	 * Releases agents.
 	 */
 	public void releaseAgents(List<String> serials) throws InterruptedException {
-		// TODO Check Threads - DONE(?) in M
+		/**Assumption: DONE in M at terminate broadcast**/
 		//------------start edit - 20/12 -------------------
 		for(String SN: serials){
 			this.agents.get(SN).release();						//change the value of isAvailable to true
 			this.agents_semaphore_map.get(SN).release();		// wake up all threads that has been waiting to this agent
+/**EDIT*/	synchronized (agents.get(SN)) {
+				this.agents.get(SN).notifyAll();		//notfiy the agent for the getAgents method
+/**EDIT*/	}
 		}
 		//------------end edit - 20/12 ---------------------
 	}
@@ -99,7 +102,6 @@ public class Squad {
 	 * @return ‘false’ if an agent of serialNumber ‘serial’ is missing, and ‘true’ otherwise
 	 */
 	public boolean getAgents(List<String> serials) throws InterruptedException {
-		// TODO MIND of deadlock & deadpool!!  needs to wait until they all available.
 		/** ASSUMPTION: only this function is locked and only it TRUE will cause sendAgentsEvent (and more) from the M class */
 		//------------start edit - 20/12 -------------------
 		for(String curr_serial: serials){	//checks if the agents are in the squad
@@ -112,12 +114,14 @@ public class Squad {
 			Semaphore curr_semaphore = agents_semaphore_map.get(curr_serial);	//get it's semaphore
 
 			curr_semaphore.acquire(); /***/
-			while(!curr_agent.isAvailable()) {		// if not avail, wait.
-				curr_semaphore.wait();					// wait on the current agent
-				/**BEWARE: may stuck there when moneypenny terminated!!! */
-				/** Solution: */
-				if(terminated)
-					return false;					//termination - EXIT and return false
+	/**EDIT*/synchronized (curr_agent){		//synch current agent, for waiting on it in the next line
+				while(!curr_agent.isAvailable()) {		// if not avail, wait.
+					curr_agent.wait();					// wait on the current agent - NOT RELEASEING THE SEMAPHORE
+					/**BEWARE: may stuck there when moneypenny terminated!!! */
+					/** Solution: */
+					if(terminated)
+						return false;					//termination - EXIT and return false
+	/**EDIT*/	}
 			}
 			curr_agent.acquire();					//agent is now available = false
 			curr_semaphore.release();	/***/    	//unlocking the semaphore
@@ -132,7 +136,6 @@ public class Squad {
      * @return a list of the names of the agents with the specified serials.
      */
     public List<String> getAgentsNames(List<String> serials){
-		// TODO Check Threads
 		//------------start edit -------------------
 		/** OMER edit 13/12 **/
 		List<String> names = new LinkedList<>();

@@ -6,8 +6,8 @@
         "Dagger shoe"
     ],
     "services": {
-        "M": 2,
-        "Moneypenny": 2,
+        "M": 1,
+        "Moneypenny": 10,
         "intelligence": [
             {
                 "missions": [
@@ -27,16 +27,8 @@
                         "duration": 2,
                         "gadget": "Dagger shoe",
                         "name": "From Russia With Love",
-                        "timeExpired": 8,
-                        "timeIssued": 6
-                    },
-                    {
-                        "serialAgentsNumbers": ["007"],
-                        "duration": 2,
-                        "gadget": "Dagger shoe",
-                        "name": "From Russia With Love",
-                        "timeExpired": 100,
-                        "timeIssued": 15
+                        "timeExpired": 24,
+                        "timeIssued": 3
                     },
                     {
                         "serialAgentsNumbers": ["006"],

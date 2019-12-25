@@ -90,19 +90,6 @@ public class Inventory {
 			fileWriter.flush(); //flush data to file   <---
 			fileWriter.close(); //close write          <---
 		} catch (IOException e) {}
-/*
-		JsonArray gadgetsDetails = new JsonArray();
-		for(String gadget : getGadgets()) {
-			gadgetsDetails.add((String) gadget.subSequence(1,gadget.length()-1));
-		}
-		JsonObject inventoryObj = new JsonObject();
-		inventoryObj.add("inventory",gadgetsDetails);
-		try (FileWriter file = new FileWriter(filename)) {
-			file.write(inventoryObj.toString());
-			file.flush();
-		} catch (IOException e) {     }
-
- */
 		//------------end edit - 22/12 ---------------------
 	}
 

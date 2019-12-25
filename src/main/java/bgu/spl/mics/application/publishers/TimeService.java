@@ -41,7 +41,6 @@ public class TimeService extends Publisher {
 	@Override
 	protected void initialize() {
 		//------------start edit - 20/12 --------------------**/
-		// TODO Implement this
 		/**  we do not need to subscribe it to anything */
 		//------------end edit - 20/12----------------------**/
 	}

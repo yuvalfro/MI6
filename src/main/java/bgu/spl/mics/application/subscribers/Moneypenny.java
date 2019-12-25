@@ -17,15 +17,14 @@ import java.util.Map;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class Moneypenny extends Subscriber {
-	//TODO : make sure that there are PERMITS on the number of INSTANCES! fix it!
 	//------------start edit - 20/12 --------------------**/
 	private static int mp_count=1;
 	private static int mp_total=0;
 	private int curr_mp_count;
+	private int curr_tick;
 	//------------end edit - 20/12----------------------**/
 
 	public Moneypenny(int total) {
-		// TODO Implement this
 		//------------start edit - 20/12 --------------------**/
 		super("Moneypenny"+mp_count);	// Moneypenny number #
 		this.curr_mp_count = mp_count;
@@ -37,7 +36,10 @@ public class Moneypenny extends Subscriber {
 
 	@Override
 	protected void initialize() {
-		//TODO: watch for specified moneypenny to handle SENDAGENTS and RELEASEDAGENTS
+		this.subscribeBroadcast(TickBroadcast.class, (TickBroadcast b) -> {
+			this.curr_tick = b.getCurrTick();
+		});	//this broadcast is a TickBroadcast which informs us of an update on the time ticks
+		/**assumption: watch for specified moneypenny to handle SENDAGENTS and RELEASEDAGENTS **/
 		//------------start edit - 21/12 --------------------**/
 		if(curr_mp_count <= Math.ceil(mp_total / 2.5)){				//only the 25% of the mp will be SEND & RELEASE
 			this.subscribeEvent(SendAgentsEvent.class, (SendAgentsEvent e) ->{
@@ -46,7 +48,7 @@ public class Moneypenny extends Subscriber {
 				ArrayList<Object> tmp_arraylist = new ArrayList<>();
 				tmp_arraylist.add(this.curr_mp_count);
 				tmp_arraylist.add(Squad.getInstance().getAgentsNames( e.sendAgentsInfo()));
-
+				System.out.println("MP "+curr_mp_count+" at tick time: " +curr_tick);	//TODO: REMOVE THIS TEST
 				complete(e , tmp_arraylist );	// the future is MP# and AgentsName for the diary
 				//sending agents for the mission, and adding result to this event
 				// e.sendAgentsInfo and e.getTimeForMission is the function of the class SendAgentsEvent
@@ -76,14 +78,6 @@ public class Moneypenny extends Subscriber {
 			for(Map.Entry<String, Agent> entry : Squad.getInstance().getAgentsMap().entrySet()) 	//running on the map <string, agent> - GETTER
 				agentsNames.add(entry.getKey());
 			Squad.getInstance().releaseAgents( agentsNames );			//releasing all agents - breaking the wait
-		/*	ConcurrentHashMap<String, Semaphore> agent_semaphore_map = Squad.getInstance().getAgentSemaphoreMap();		//GETTER
-			for(Map.Entry<String, Semaphore> entry : agent_semaphore_map.entrySet()) {	//running on the agent,semaphore
-				entry.getValue().acquire();
-				entry.getValue().notifyAll();
-				entry.getValue().release();			//to wake up MP that is waiting for agents (in the function Squad.getAgents()
-
-			}
-		*/
 			this.terminate();
 		});
 		//------------end edit - 21/12----------------------**/

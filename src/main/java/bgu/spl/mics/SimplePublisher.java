@@ -23,7 +23,6 @@ public final class SimplePublisher {
      * 	       			null in case no Subscriber has subscribed to {@code e.getClass()}.
      */
     public final <T> Future<T> sendEvent(Event<T> e) {
-        //TODO: implement this.
         //------------start edit - 19/12 --------------------**/
         return MessageBrokerImpl.getInstance().sendEvent(e);        //sending event using the MessageBroker and receiving and Future
         //------------end edit - 19/12----------------------**/
@@ -36,7 +35,6 @@ public final class SimplePublisher {
      * @param b The broadcast message to send
      */
     public final void sendBroadcast(Broadcast b) {
-        //TODO: implement this.
         //------------start edit - 19/12 --------------------**/
         MessageBrokerImpl.getInstance().sendBroadcast(b);           //sending broadcast using the MessageBroker
         //------------end edit - 19/12----------------------**/

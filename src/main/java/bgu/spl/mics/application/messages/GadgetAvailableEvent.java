@@ -11,7 +11,7 @@ public class GadgetAvailableEvent implements Event <ArrayList<Object>>{
 
     public GadgetAvailableEvent(String gadget){
         this.gadget=gadget;
-    } //TODO: M will send a specific gadget g
+    } /**Assumption: M will send a specific gadget g**/
 
     public String getNeededGadget(){
         return this.gadget;

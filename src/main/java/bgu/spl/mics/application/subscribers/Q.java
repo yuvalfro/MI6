@@ -20,26 +20,19 @@ public class Q extends Subscriber {
 	private int curr_tick;
 	private static int q_count=1;
 
-		/** for signleton - thread safe*/
-	private static class SingletonHolder {
-		private static Q q_instance;
-	} // get instance like TIRGUL 8
 	//------------end edit - 20/12----------------------**/
 
 	public Q() {
-		// TODO Implement this
 		//------------start edit - 20/12 --------------------**/
 		super("Q"+q_count);	// Q number #
 		q_count++;
-		SingletonHolder.q_instance = this;
-		//TODO: should we implement this as a "getInstance" or just delete because we created only 1 anyway
+		/**assumption: should we implement this as a "getInstance" or just delete because we created only 1 anyway **/
 		/** after the first build of the Q, we will insert it to the singleton holder*/
 		//------------end edit - 20/12----------------------**/
 	}
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
 		//------------start edit - 19/12 --------------------**/
 		//using lambda expression
 		this.subscribeBroadcast(TickBroadcast.class, (TickBroadcast b) -> {

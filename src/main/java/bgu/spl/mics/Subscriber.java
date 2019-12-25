@@ -54,7 +54,6 @@ public abstract class Subscriber extends RunnableSubPub {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-        //TODO: implement this.
         //------------start edit - 19/12 --------------------**/
         event_callback_map.putIfAbsent(type,callback);                  //2. Store the {@code callback} so that when events of type {@code type} are received it will be called.
         MessageBrokerImpl.getInstance().subscribeEvent(type,this);   //1. Subscribe to events in the singleton MessageBroker using the supplied {@code type}
@@ -82,7 +81,6 @@ public abstract class Subscriber extends RunnableSubPub {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-        //TODO: implement this.
         //------------start edit - 19/12 --------------------**/
         broadcast_callback_map.putIfAbsent(type,callback);                  //2. Store the {@code callback} so that when broadcast messages of type {@code type} received it will be called.
         MessageBrokerImpl.getInstance().subscribeBroadcast(type,this);   //1. Subscribe to broadcast messages in the singleton MessageBroker using the supplied {@code type}
@@ -100,7 +98,6 @@ public abstract class Subscriber extends RunnableSubPub {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-        //TODO: implement this.
         //------------start edit - 19/12 --------------------**/
         MessageBrokerImpl.getInstance().complete(e,result);
         //------------end edit - 19/12----------------------**/
@@ -115,7 +112,7 @@ public abstract class Subscriber extends RunnableSubPub {
     }
 
     /**
-     * The entry point of the Subscriber. TODO: you must complete this code
+     * The entry point of the Subscriber.
      * otherwise you will end up in an infinite loop.
      */
     @Override
@@ -131,7 +128,7 @@ public abstract class Subscriber extends RunnableSubPub {
                 Message curr_msg = MessageBrokerImpl.getInstance().awaitMessage(this);      //waiting for msg
                 if( curr_msg instanceof Event){
                     event_callback_map.get(curr_msg.getClass()).call(curr_msg);                           // calling callback
-                } //TODO watch for curr_msg sended to callback (mayabe not right)
+                }
                 else { // curr_msg instanceof Broadcast
                     broadcast_callback_map.get(curr_msg.getClass()).call(curr_msg);                   // calling callback
                 }
