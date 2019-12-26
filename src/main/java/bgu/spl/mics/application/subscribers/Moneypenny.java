@@ -46,9 +46,9 @@ public class Moneypenny extends Subscriber {
 				Squad.getInstance().sendAgents(e.sendAgentsInfo() , e.getTimeForMission());
 
 				ArrayList<Object> tmp_arraylist = new ArrayList<>();
-				tmp_arraylist.add(this.curr_mp_count);
-				tmp_arraylist.add(Squad.getInstance().getAgentsNames( e.sendAgentsInfo()));
-				System.out.println("MP "+curr_mp_count+" at tick time: " +curr_tick);	//TODO: REMOVE THIS TEST
+				tmp_arraylist.add(this.curr_mp_count);											//moneypenny number
+				tmp_arraylist.add(Squad.getInstance().getAgentsNames( e.sendAgentsInfo()));		// agents name
+	System.out.println("MP "+curr_mp_count+" at tick time: " +curr_tick);	//TODO: REMOVE THIS TEST
 				complete(e , tmp_arraylist );	// the future is MP# and AgentsName for the diary
 				//sending agents for the mission, and adding result to this event
 				// e.sendAgentsInfo and e.getTimeForMission is the function of the class SendAgentsEvent

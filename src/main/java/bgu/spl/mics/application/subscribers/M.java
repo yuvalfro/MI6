@@ -61,57 +61,63 @@ public class M extends Subscriber {
 			 * LOGIC: first get agents -> than get gadget -> than check time & update diarrhea */
 
 			/** assumption - make AGENTS UNavailable from squad methods**/
-			if(future_agentAvail.get()) { // if agents are available - we marked them as isAvailable=false
-				/** __if this ^ future is true__ - all agents are available right now
-				 * __else__: no such agent, return false _OR_ terminated broadcast will return false
-				/** MADE sure that SQUAD is thread safe for those actions*/
-				GadgetAvailableEvent new_gadgetAvailEvent = new GadgetAvailableEvent(e.getMissionInfo().getGadget());				//creating event available gadget we want for the mission
-				Future< ArrayList<Object> > future_gadgetAvail = getSimplePublisher().sendEvent(new_gadgetAvailEvent);				//Future object we make for the GadgetAvailEvent
+			try {
+				if (future_agentAvail.get()) { // if agents are available - we marked them as isAvailable=false
+					/** __if this ^ future is true__ - all agents are available right now
+					 * __else__: no such agent, return false _OR_ terminated broadcast will return false */
 
-				future_gadgetAvail.get((long)e.getMissionInfo().getDuration()-1, TimeUnit.MILLISECONDS); 	//it will wait if searching - for most the duration of the mission
-				if (future_gadgetAvail!=null && (boolean)future_gadgetAvail.get().get(0)) {	//if gadget is available - we took it and deleted it
-					/** __if this ^ future is true__ - gadget is available
-					 * __else__: no such gadget, return false.    no otermination proccess because GadgetAvail is fast
-					/** MADE sure that INVENTORY is thread safe for those actions */
-					int Duration = e.getMissionInfo().getDuration();
-					int MissionEnd = e.getMissionInfo().getTimeExpired();
-					int ENDOFTIME = TimeService.getInstance().getTotal_tick();
-					if (curr_tick+Duration<=MissionEnd && curr_tick+Duration<=ENDOFTIME) {
-						SendAgentsEvent new_sendAgentsEvent = new SendAgentsEvent(e.getMissionInfo().getSerialAgentsNumbers(),
-								e.getMissionInfo().getDuration()); // sending the agents we want to send and the time for the mission
-						Future<ArrayList<Object>> future_sendAgents = getSimplePublisher().sendEvent(new_sendAgentsEvent);						// Future object we make for the SendAgents
+					/** MADE sure that SQUAD is thread safe for those actions*/
+					GadgetAvailableEvent new_gadgetAvailEvent = new GadgetAvailableEvent(e.getMissionInfo().getGadget());                //creating event available gadget we want for the mission
+					Future<ArrayList<Object>> future_gadgetAvail = getSimplePublisher().sendEvent(new_gadgetAvailEvent);                //Future object we make for the GadgetAvailEvent
 
-						//Diary update:
-						curr_report.setMoneypenny( (int)future_sendAgents.get().get(0) );				// adding MP# to the report
-						curr_report.setAgentsNames( (List<String>)future_sendAgents.get().get(1) );		// adding AgentsNames to the report
-						curr_report.setGadgetName( future_gadgetAvail.get().get(2).toString() );			// adding the gadget to the report
-						curr_report.setQTime( ((int) future_gadgetAvail.get().get(1)));					// adding QTime to the report
-						curr_report.setTimeCreated(curr_tick);											// adding TimeCreated
-						System.out.println("M "+curr_m_number+" at tick time: " +curr_tick);	//TODO: REMOVE THIS TEST
-						synchronized (Diary.getInstance()) {				//insertion should be safe
-							Diary.getInstance().addReport(curr_report);
+					try {
+						future_gadgetAvail.get((long) e.getMissionInfo().getDuration() - 1, TimeUnit.MILLISECONDS);    //it will wait if searching - for most the duration of the mission
+						if (future_gadgetAvail != null && (boolean) future_gadgetAvail.get().get(0)) {    //if gadget is available - we took it and deleted it
+							/** __if this ^ future is true__ - gadget is available
+							 * __else__: no such gadget, return false.    no termination proccess because GadgetAvail is fast
+							 /** MADE sure that INVENTORY is thread safe for those actions */
+							int Duration = e.getMissionInfo().getDuration();
+							int MissionEnd = e.getMissionInfo().getTimeExpired();
+
+							if (curr_tick + Duration <= MissionEnd) {        // no need to check at the end of time - 25/12
+								SendAgentsEvent new_sendAgentsEvent = new SendAgentsEvent(e.getMissionInfo().getSerialAgentsNumbers(),
+										e.getMissionInfo().getDuration()); // sending the agents we want to send and the time for the mission
+								Future<ArrayList<Object>> future_sendAgents = getSimplePublisher().sendEvent(new_sendAgentsEvent);                        // Future object we make for the SendAgents
+
+								//Diary update:
+								curr_report.setMoneypenny((int) future_sendAgents.get().get(0));                // adding MP# to the report
+								curr_report.setAgentsNames((List<String>) future_sendAgents.get().get(1));        // adding AgentsNames to the report
+								curr_report.setGadgetName(future_gadgetAvail.get().get(2).toString());            // adding the gadget to the report
+								curr_report.setQTime(((int) future_gadgetAvail.get().get(1)));                    // adding QTime to the report
+								curr_report.setTimeCreated(curr_tick);                                            // adding TimeCreated
+			System.out.println("M " + curr_m_number + " at tick time: " + curr_tick);    //TODO: REMOVE THIS TEST
+								synchronized (Diary.getInstance()) {                //insertion should be safe
+									Diary.getInstance().addReport(curr_report);
+								}
+
+								/** now the agents will released after the duration of the mission!!! */
+								complete(e, "Completed");
+							} else {    //no time for duration
+								ReleasedAgentsEvent new_releasedAgentsEvent = new ReleasedAgentsEvent(e.getMissionInfo().getSerialAgentsNumbers()); //created new event to released occupied agents
+								Future<Boolean> future_agentsReleased = getSimplePublisher().sendEvent(new_releasedAgentsEvent); // Future object we make for the ReleasedAgentsEvent
+								//Gadget is gone for good....
+								complete(e, "Aborted");
+							}
+						} else {        //no gadget available
+							ReleasedAgentsEvent new_releasedAgentsEvent = new ReleasedAgentsEvent(e.getMissionInfo().getSerialAgentsNumbers()); //created new event to released occupied agents
+							Future<Boolean> future_agentsReleased = getSimplePublisher().sendEvent(new_releasedAgentsEvent); // Future object we make for the ReleasedAgentsEvent
+							complete(e, "Aborted");
 						}
-
-						/** now the agents will released after the duration of the mission!!! */
-						complete(e, "Completed");
-					}
-					else{	//no time for duration
-						ReleasedAgentsEvent new_releasedAgentsEvent = new ReleasedAgentsEvent(e.getMissionInfo().getSerialAgentsNumbers()); //created new event to released occupied agents
-						Future<Boolean> future_agentsReleased = getSimplePublisher().sendEvent(new_releasedAgentsEvent); // Future object we make for the ReleasedAgentsEvent
-						//Gadget is gone for good....
+					} catch (NullPointerException er) {		//future gadget null pointer - Q unregistered
 						complete(e, "Aborted");
 					}
-				}
-				else{		//no gadget available
-					ReleasedAgentsEvent new_releasedAgentsEvent = new ReleasedAgentsEvent(e.getMissionInfo().getSerialAgentsNumbers()); //created new event to released occupied agents
-					Future<Boolean> future_agentsReleased = getSimplePublisher().sendEvent(new_releasedAgentsEvent); // Future object we make for the ReleasedAgentsEvent
+				}// if no available, will wait there until we get all the agents
+				else { // for the ENDOFTIME mission should be aborted
 					complete(e, "Aborted");
 				}
-			}// if no available, will wait there until we get all the agents
-			else{ // for the ENDOFTIME mission should be aborted
+			}catch(NullPointerException ed){			//future agent null pointer - moneyponney unregistered
 				complete(e, "Aborted");
 			}
-
 		});
 
 		this.subscribeBroadcast(TerminateBroadcast.class, (TerminateBroadcast e) ->

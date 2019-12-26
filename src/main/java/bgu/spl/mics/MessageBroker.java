@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * The MessageBroker is a shared object used for communication between
  * Subscribers\Publishers.
@@ -93,5 +95,9 @@ public interface MessageBroker {
      *                              to became available.
      */
     Message awaitMessage(Subscriber s) throws InterruptedException;
-    
+
+
+    //---------------TODO: DELETE THIS-------------------
+    void clear();
+    //---------------TODO: DELETE THIS-------------------
 }

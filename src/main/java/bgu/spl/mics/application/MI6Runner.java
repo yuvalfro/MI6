@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class MI6Runner {
         public static void main(String[] args) throws FileNotFoundException {
-        // TODO Implement this
         //------------start edit - 22/12 --------------------**/
 
             /**@DONE: read input file */
@@ -94,6 +93,7 @@ public class MI6Runner {
             String diaryOutputJson = gson.toJson(diray_list);           //TODO: DELETE THIS TEST
             System.out.println(inventoryOutputJson);                    //TODO: DELETE THIS TEST
             System.out.println(diaryOutputJson);                        //TODO: DELETE THIS TEST
+            System.out.println(sent_missions);                          //TODO: DELETE THIS TEST
 
             //Inventory out:
             Inventory.getInstance().printToFile(args[1]);   //args[1] = "..\\MI6\\inventoryOutputFile.json"

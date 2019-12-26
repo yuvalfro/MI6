@@ -1,7 +1,10 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.messages.MissionReceivedEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
+import bgu.spl.mics.application.subscribers.M;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -27,6 +30,8 @@ public class MessageBrokerImpl implements MessageBroker {
 			//each event has it's own future object
 	private boolean terminate_received;			//for checking termination msg
 
+	private String M_Q;//TODO: DELETE THIS TEST
+
 	/** for signleton - thread safe*/
 	private static class SingletonHolder {
 		private static MessageBroker mb_instance = new MessageBrokerImpl();
@@ -42,6 +47,7 @@ public class MessageBrokerImpl implements MessageBroker {
 		events_q_map = new ConcurrentHashMap<>();
 		future_event_map = new ConcurrentHashMap<>();
 		terminate_received = false;
+		M_Q="";	//TODO: DELETE THIS TEST
 	}
 	//------------end edit - 17/12----------------------**/
 	/**
@@ -91,8 +97,8 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public <T> void complete(Event<T> e, T result) {
 		//------------start edit - 18/12 --------------------**/
-		future_event_map.get(e).resolve(result);			//this hashmap is already thread safe
-		future_event_map.remove(e);							//removing the resolved event
+		future_event_map.get(e).resolve(result);            //this hashmap is already thread safe
+		future_event_map.remove(e);                            //removing the resolved event
 		//------------end edit - 18/12----------------------**/
 	}
 
@@ -106,9 +112,12 @@ public class MessageBrokerImpl implements MessageBroker {
 			Pair <Semaphore,ConcurrentLinkedQueue<Subscriber>> broadcast_pair = broadcast_q_map.get(b.getClass());		//for iterator on broadcast_pair queue of subscribers
 			for (Subscriber sub: broadcast_pair.getValue()) {
 				synchronized (sub) { 											// synchronized THE OBJECT SUBSCRIBER
-					if (subscriber_msg_type_map.containsKey(sub)) {				//checks if subscriber is in UNREGISTER proccess
-						subscriber_msg_type_map.get(sub).add(b);		// add the message b to sub queue
-						sub.notifyAll();											// awake for the AWAIT MESSAGE
+
+					if (subscriber_msg_type_map.containsKey(sub)) {                //checks if subscriber is in UNREGISTER proccess
+						//if (sub.getClass() == M.class)    //TODO: DELETE THIS TEST
+						//	M_Q=M_Q+"\n"+b.toString().substring(34);//TODO: DELETE THIS TEST
+						subscriber_msg_type_map.get(sub).add(b);        // add the message b to sub queue
+						sub.notifyAll();                                            // awake for the AWAIT MESSAGE
 					}
 				}
 			}
@@ -120,29 +129,47 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		//------------start edit - 21/12 --------------------**/
+		//if(e.getClass()==MissionReceivedEvent.class) {                //TODO: DELETE THIS TEST
+		//	System.out.println("Mission " + (((MissionReceivedEvent) e).getMissionInfo().getMissionName() + " , has arrived to ....... "));    //TODO: DELETE THIS TEST
+		//	System.out.println("events_q_map has the key of the class "+e.getClass().toString().substring(34)+"? "+ events_q_map.containsKey(e.getClass())+" \n"+
+		//			"in events_q_map, the queue of event "+e.getClass().toString().substring(34)+" is empty? "+events_q_map.get(e.getClass()).getValue().isEmpty()); //TODO: DELETE THIS TEST
+		//}
 		if ((!events_q_map.containsKey(e.getClass())) || (events_q_map.get(e.getClass()).getValue().isEmpty())) {    // no such event, or no subscriber's queue
 			return null;
 		} else {
-			Future<T> future_event = new Future<T>();
-			future_event_map.put(e, future_event);                            // adding new <event,future> to the map
-			Subscriber sub = events_q_map.get(e.getClass()).getValue().peek();
-			synchronized ( sub ) {
-				/**Sync cause: watch for unregistering**/
-				Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>> event_pair = events_q_map.get(e.getClass());
-				try {
-					event_pair.getKey().acquire();									 // catching the semaphore for fairness in deQ and enQ
+			future_event_map.put(e, new Future<T>());                            // adding new <event,future> to the map
+			Future<T> future_event = future_event_map.get(e);
+			try{
+				Subscriber sub = events_q_map.get(e.getClass()).getValue().peek();
+				synchronized ( sub ) {
+					/**Sync cause: watch for unregistering**/
+					Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>> event_pair = events_q_map.get(e.getClass());
+					try {
+						event_pair.getKey().acquire();									 // catching the semaphore for fairness in deQ and enQ
 
-					Subscriber first = event_pair.getValue().poll();                 //dequeue first subscriber
-					event_pair.getValue().add(first);                                //enqueue first to be the last
-					subscriber_msg_type_map.get(sub).add(e);                         // add the message e to sub queue
-					sub.notifyAll();                                                    // awake for the AWAIT MESSAGE
+						Subscriber first = event_pair.getValue().poll();                 //dequeue first subscriber
+						event_pair.getValue().add(first);                                //enqueue first to be the last
 
-					event_pair.getKey().release();
-				} catch (InterruptedException ex) {
+						//if(sub.getClass()==M.class)									//TODO: DELETE THIS TEST
+						//	M_Q=M_Q+"\n"+e.toString().substring(34);				//TODO: DELETE THIS TEST
+						if(e.getClass()==MissionReceivedEvent.class)				//TODO: DELETE THIS TEST
+							System.out.println("Mission "+(((MissionReceivedEvent) e).getMissionInfo().getMissionName()+ " , has arrived to "+sub.getName()));	//TODO: DELETE THIS TEST
+
+						subscriber_msg_type_map.get(sub).add(e);                         // add the message e to sub queue
+
+						sub.notifyAll();                                                    // awake for the AWAIT MESSAGE
+
+						event_pair.getKey().release();
+					} catch (InterruptedException ex) {
+						//ex.printStackTrace();
+					}
 				}
+				//future_event.get();
+				return future_event;
+
+			}catch (NullPointerException er){
+				return null;
 			}
-			future_event.get();
-			return future_event;
 		}
 	}
 		//------------end edit - 21/12----------------------**/
@@ -161,11 +188,20 @@ public class MessageBrokerImpl implements MessageBroker {
 	public void unregister(Subscriber m) {
 		//------------start edit - 19/12 --------------------**/
 		synchronized (m){
+			for(Message msg : subscriber_msg_type_map.get(m) ){	// releasing all future objects that never been answered by 'm'
+				try {
+					future_event_map.get(msg).resolve(null);            // this is the future of the event/broadcast in the m queue
+				}catch(NullPointerException er) { }
+			}
 			subscriber_msg_type_map.remove(m);
-			for(Map.Entry< Class<? extends Event> , Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>>> entry_event : events_q_map.entrySet()) 	//running on the Pairs <Semaphore, Q>
-				entry_event.getValue().getValue().remove(m);			//removing subscriber m from X_event q
-			for(Map.Entry< Class<? extends Broadcast> , Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>>> entry_broadcast : broadcast_q_map.entrySet()) 	//running on the Pairs <Semaphore, Q>
-				entry_broadcast.getValue().getValue().remove(m);		//removing subscriber m from X_broadcast q
+			for(Map.Entry< Class<? extends Event> , Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>>> entry_event : events_q_map.entrySet()) {    //running on the Pairs <Semaphore, Q>
+				if(entry_event.getValue().getValue().contains(m))
+					entry_event.getValue().getValue().remove(m);
+			}//removing subscriber m from X_event q
+			for(Map.Entry< Class<? extends Broadcast> , Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>>> entry_broadcast : broadcast_q_map.entrySet()) {    //running on the Pairs <Semaphore, Q>
+				if(entry_broadcast.getValue().getValue().contains(m))
+					entry_broadcast.getValue().getValue().remove(m);       //removing subscriber m from X_broadcast q
+			}
 		}
 		//------------end edit - 19/12----------------------**/
 	}
@@ -177,18 +213,23 @@ public class MessageBrokerImpl implements MessageBroker {
 			if(!subscriber_msg_type_map.containsKey(m))					//if the subscriber is NOT in the hash table
 				throw new InterruptedException();
 			while(subscriber_msg_type_map.get(m).isEmpty()) {            //the q is empty, so wait for a message
-				m.wait();
-				//subscriber_msg_type_map.get(m).getKey().wait();			// wait loop...
+				m.wait();												// wait loop...
 			}
-
-			if(terminate_received) {
-				return new TerminateBroadcast();                            // force send of terminate broadcast !!!
-			}
-			else {
-				Message msg = subscriber_msg_type_map.get(m).poll();        // pool your message
-				return msg;        // send your message
-			}
+		Message msg = subscriber_msg_type_map.get(m).poll();        // pool your message
+		return msg;        // send your message
 		}
 		//------------end edit - 21/12----------------------**/
 	}
+
+	//---------------TODO: DELETE THIS-------------------
+	public void clear() {
+
+		subscriber_msg_type_map = new ConcurrentHashMap<>();
+		broadcast_q_map = new ConcurrentHashMap<>();
+		events_q_map = new ConcurrentHashMap<>();
+		future_event_map = new ConcurrentHashMap<>();
+		terminate_received = false;
+		M_Q = "";    //TODO: DELETE THIS TEST
+	}
+	//---------------TODO: DELETE THIS-------------------
 }

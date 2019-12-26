@@ -36,7 +36,7 @@ public class Intelligence extends Subscriber {
 				leftovers.add(m);		//double timed missions
 			else
 				missionInfoHashMap.put(m.getTimeIssued() , m);
-		} /** @FIXED@ we has the same key*/
+		} /** @FIXED@ we have the same key*/
 	}
 	//------------end edit - 20/12----------------------**/
 
@@ -54,6 +54,7 @@ public class Intelligence extends Subscriber {
 							if(curr.getTimeIssued()==curr_tick){
 								MissionReceivedEvent new_mission2 = new MissionReceivedEvent( curr, curr_tick );
 								Future<String> future_missionEvent2 = getSimplePublisher().sendEvent(new_mission2);
+
 							}
 						}
 						// no need to complete - M will do the complete event
