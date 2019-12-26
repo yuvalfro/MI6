@@ -82,7 +82,7 @@ public class MI6Runner {
                 } catch (InterruptedException e) { }
              }
 
-            List<String> gadget_left = Inventory.getInstance().getGadgets();    //TODO: DELETE THIS TEST
+     /**       List<String> gadget_left = Inventory.getInstance().getGadgets();    //TODO: DELETE THIS TEST
             List<Report> diray_list = Diary.getInstance().getReports();         //TODO: DELETE THIS TEST
             int sent_missions = Diary.getInstance().getTotal();                 //TODO: DELETE THIS TEST
             int completed_missions = Diary.getInstance().getReports().size();   //TODO: DELETE THIS TEST
@@ -94,7 +94,7 @@ public class MI6Runner {
             System.out.println(inventoryOutputJson);                    //TODO: DELETE THIS TEST
             System.out.println(diaryOutputJson);                        //TODO: DELETE THIS TEST
             System.out.println(sent_missions);                          //TODO: DELETE THIS TEST
-
+      **/
             //Inventory out:
             Inventory.getInstance().printToFile(args[1]);   //args[1] = "..\\MI6\\inventoryOutputFile.json"
 

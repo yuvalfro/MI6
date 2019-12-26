@@ -30,7 +30,7 @@ public class MessageBrokerImpl implements MessageBroker {
 			//each event has it's own future object
 	private boolean terminate_received;			//for checking termination msg
 
-	private String M_Q;//TODO: DELETE THIS TEST
+/**	private String M_Q;//TODO: DELETE THIS TEST **/
 
 	/** for signleton - thread safe*/
 	private static class SingletonHolder {
@@ -47,7 +47,7 @@ public class MessageBrokerImpl implements MessageBroker {
 		events_q_map = new ConcurrentHashMap<>();
 		future_event_map = new ConcurrentHashMap<>();
 		terminate_received = false;
-		M_Q="";	//TODO: DELETE THIS TEST
+	/**	M_Q="";	//TODO: DELETE THIS TEST **/
 	}
 	//------------end edit - 17/12----------------------**/
 	/**
@@ -114,8 +114,8 @@ public class MessageBrokerImpl implements MessageBroker {
 				synchronized (sub) { 											// synchronized THE OBJECT SUBSCRIBER
 
 					if (subscriber_msg_type_map.containsKey(sub)) {                //checks if subscriber is in UNREGISTER proccess
-						//if (sub.getClass() == M.class)    //TODO: DELETE THIS TEST
-						//	M_Q=M_Q+"\n"+b.toString().substring(34);//TODO: DELETE THIS TEST
+					/**	//if (sub.getClass() == M.class)    //TODO: DELETE THIS TEST
+						//	M_Q=M_Q+"\n"+b.toString().substring(34);//TODO: DELETE THIS TEST **/
 						subscriber_msg_type_map.get(sub).add(b);        // add the message b to sub queue
 						sub.notifyAll();                                            // awake for the AWAIT MESSAGE
 					}
@@ -129,11 +129,12 @@ public class MessageBrokerImpl implements MessageBroker {
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		//------------start edit - 21/12 --------------------**/
-		//if(e.getClass()==MissionReceivedEvent.class) {                //TODO: DELETE THIS TEST
-		//	System.out.println("Mission " + (((MissionReceivedEvent) e).getMissionInfo().getMissionName() + " , has arrived to ....... "));    //TODO: DELETE THIS TEST
-		//	System.out.println("events_q_map has the key of the class "+e.getClass().toString().substring(34)+"? "+ events_q_map.containsKey(e.getClass())+" \n"+
-		//			"in events_q_map, the queue of event "+e.getClass().toString().substring(34)+" is empty? "+events_q_map.get(e.getClass()).getValue().isEmpty()); //TODO: DELETE THIS TEST
-		//}
+
+	/**	if(e.getClass()==MissionReceivedEvent.class) {                //TODO: DELETE THIS TEST
+			System.out.println("Mission " + (((MissionReceivedEvent) e).getMissionInfo().getMissionName() + " , has arrived to ....... "));    //TODO: DELETE THIS TEST
+			System.out.println("events_q_map has the key of the class "+e.getClass().toString().substring(34)+"? "+ events_q_map.containsKey(e.getClass())+" \n"+
+					"in events_q_map, the queue of event "+e.getClass().toString().substring(34)+" is empty? "+events_q_map.get(e.getClass()).getValue().isEmpty()); //TODO: DELETE THIS TEST
+		}			**/
 		if ((!events_q_map.containsKey(e.getClass())) || (events_q_map.get(e.getClass()).getValue().isEmpty())) {    // no such event, or no subscriber's queue
 			return null;
 		} else {
@@ -145,21 +146,20 @@ public class MessageBrokerImpl implements MessageBroker {
 					/**Sync cause: watch for unregistering**/
 					Pair<Semaphore, ConcurrentLinkedQueue<Subscriber>> event_pair = events_q_map.get(e.getClass());
 					try {
-						event_pair.getKey().acquire();									 // catching the semaphore for fairness in deQ and enQ
+						event_pair.getKey().acquire();									 // CATCHING the semaphore for fairness in deQ and enQ
 
 						Subscriber first = event_pair.getValue().poll();                 //dequeue first subscriber
 						event_pair.getValue().add(first);                                //enqueue first to be the last
 
-						//if(sub.getClass()==M.class)									//TODO: DELETE THIS TEST
-						//	M_Q=M_Q+"\n"+e.toString().substring(34);				//TODO: DELETE THIS TEST
+				/**		if(sub.getClass()==M.class)									//TODO: DELETE THIS TEST
+							M_Q=M_Q+"\n"+e.toString().substring(34);				//TODO: DELETE THIS TEST
 						if(e.getClass()==MissionReceivedEvent.class)				//TODO: DELETE THIS TEST
 							System.out.println("Mission "+(((MissionReceivedEvent) e).getMissionInfo().getMissionName()+ " , has arrived to "+sub.getName()));	//TODO: DELETE THIS TEST
-
+				**/
 						subscriber_msg_type_map.get(sub).add(e);                         // add the message e to sub queue
-
 						sub.notifyAll();                                                    // awake for the AWAIT MESSAGE
 
-						event_pair.getKey().release();
+						event_pair.getKey().release();									 // RELEASING the semaphore for fairness in deQ and enQ
 					} catch (InterruptedException ex) {
 						//ex.printStackTrace();
 					}
@@ -220,16 +220,4 @@ public class MessageBrokerImpl implements MessageBroker {
 		}
 		//------------end edit - 21/12----------------------**/
 	}
-
-	//---------------TODO: DELETE THIS-------------------
-	public void clear() {
-
-		subscriber_msg_type_map = new ConcurrentHashMap<>();
-		broadcast_q_map = new ConcurrentHashMap<>();
-		events_q_map = new ConcurrentHashMap<>();
-		future_event_map = new ConcurrentHashMap<>();
-		terminate_received = false;
-		M_Q = "";    //TODO: DELETE THIS TEST
-	}
-	//---------------TODO: DELETE THIS-------------------
 }

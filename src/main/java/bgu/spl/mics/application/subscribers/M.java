@@ -90,7 +90,7 @@ public class M extends Subscriber {
 								curr_report.setGadgetName(future_gadgetAvail.get().get(2).toString());            // adding the gadget to the report
 								curr_report.setQTime(((int) future_gadgetAvail.get().get(1)));                    // adding QTime to the report
 								curr_report.setTimeCreated(curr_tick);                                            // adding TimeCreated
-			System.out.println("M " + curr_m_number + " at tick time: " + curr_tick);    //TODO: REMOVE THIS TEST
+		/**	System.out.println("M " + curr_m_number + " at tick time: " + curr_tick);    //TODO: REMOVE THIS TEST **/
 								synchronized (Diary.getInstance()) {                //insertion should be safe
 									Diary.getInstance().addReport(curr_report);
 								}

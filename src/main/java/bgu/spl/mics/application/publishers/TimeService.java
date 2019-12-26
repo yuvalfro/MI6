@@ -53,7 +53,7 @@ public class TimeService extends Publisher {
 				TimeUnit.MILLISECONDS.sleep(TICK_DELAY);
 			} catch (InterruptedException e) {	}
 			time_tick++;
-	System.out.println("___ Timeservice: "+ time_tick+"_____");			//TODO: DELETE THIS TEST
+/** 	System.out.println("___ Timeservice: "+ time_tick+"_____");			//TODO: DELETE THIS TEST  **/
 			getSimplePublisher().sendBroadcast(new TickBroadcast(time_tick));	//sending a tick broadcast each tick
 		}
 		try {

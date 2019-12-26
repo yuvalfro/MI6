@@ -96,10 +96,4 @@ public class Diary {
 		total++;
 		//------------end edit - 20/12 ---------------------
 	}
-
-	//------------TODO: DELETE IT---------------
-	public void clear(){
-		this.reports=new LinkedList<>();
-	}
-	//------------TODO: DELETE IT---------------
 }

@@ -115,16 +115,19 @@ public class Squad {
 
 			curr_semaphore.acquire(); /***/
 	/**EDIT*/synchronized (curr_agent){		//synch current agent, for waiting on it in the next line
-				while(!curr_agent.isAvailable()) {		// if not avail, wait.
+				while(!curr_agent.isAvailable() & !terminated) {		// if not avail, wait.  //termination - EXIT and return false
 					curr_agent.wait();					// wait on the current agent - NOT RELEASEING THE SEMAPHORE
 					/**BEWARE: may stuck there when moneypenny terminated!!! */
-					/** Solution: */
-					if(terminated)
-						return false;					//termination - EXIT and return false
+					/** Solution:  added field terminated to */
 	/**EDIT*/	}
+			}
+			if(terminated) {				//termination skipps acquire
+				curr_semaphore.release();
+				return false;
 			}
 			curr_agent.acquire();					//agent is now available = false
 			curr_semaphore.release();	/***/    	//unlocking the semaphore
+
 		}
 		return true;
 		//------------end edit - 20/12 ---------------------
@@ -137,13 +140,11 @@ public class Squad {
      */
     public List<String> getAgentsNames(List<String> serials){
 		//------------start edit -------------------
-		/** OMER edit 13/12 **/
 		List<String> names = new LinkedList<>();
 		for (String curr:serials) {
 			names.add(agents.get(curr).getName());
 		}
 		return names;
-		/** OMER end edit 13/12 **/
 		//------------end edit ---------------------
     }
 

@@ -1,0 +1,37 @@
+{
+  "reports": [
+    {
+      "missionName": "Where are my testicles, Summer?",
+      "m": 4,
+      "moneypenny": 1,
+      "agentsSerialNumbers": [
+        "002",
+        "003"
+      ],
+      "agentsNames": [
+        "Summer Smith",
+        "Dr. Glip-Glop"
+      ],
+      "gadgetName": "Ionic Defibulizer2",
+      "qTime": 5,
+      "timeIssued": 5,
+      "timeCreated": 5
+    },
+    {
+      "missionName": "Snuffles was my slave name, you can call me snowball because my fur is pretty and white.",
+      "m": 1,
+      "moneypenny": 2,
+      "agentsSerialNumbers": [
+        "001"
+      ],
+      "agentsNames": [
+        "Mr. Goldenfold"
+      ],
+      "gadgetName": "Dream inceptor5",
+      "qTime": 3,
+      "timeIssued": 3,
+      "timeCreated": 3
+    }
+  ],
+  "total": 28
+}
