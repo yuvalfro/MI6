@@ -1,7 +1,8 @@
 # MI6
+This was the second assignemnt in the course SPL201 - java multi-thread working program.
 
-*Test*:       try to test the program to the limit. many M's and Moneypenny, and many events to do. 
-              Where does the program stop to work? 
-              Is there a time when everyone is 'waiting'?
+For running write the following command:
 
-*Clear&send*: delete previous code /* */  & delete unnessecry TODO's
+1) ~/bin/mvn compile
+2) mvn exec:java -Dexec.mainClass="bgu.spl.mics.application.MI6Runner" -Dexec.args="inputFile#.json inventoryOutputFile.json diaryOutputFile.json"
+3) watch excuting missions for the MI6
